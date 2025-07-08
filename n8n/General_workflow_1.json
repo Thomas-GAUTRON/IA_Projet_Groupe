@@ -1,0 +1,79 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "upload-pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -380,
+        -140
+      ],
+      "id": "aa77e47f-316f-4c0f-a898-4e17c0ef2d00",
+      "name": "Webhook",
+      "webhookId": "461d9b79-3a71-497f-9b34-ea06203b85a7"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2c7af1a5-41f1-4d12-9d4f-0dda2249013d",
+              "leftValue": "={{ $json.body.category }}",
+              "rightValue": "cat1",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -160,
+        -140
+      ],
+      "id": "12855a7d-e940-46aa-b87b-56ff0cd6cbf5",
+      "name": "If"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "00310582-b731-48d2-bf6f-9180e8967db7",
+  "meta": {
+    "instanceId": "810a5a09711e83ddb9dde1ea087184f7d09c734cbbfe8841ddb8972af37936b2"
+  },
+  "id": "0EZwQkcdnHzSrWuP",
+  "tags": []
+}
