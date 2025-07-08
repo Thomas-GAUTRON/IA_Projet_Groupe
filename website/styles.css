@@ -1,0 +1,86 @@
+/* Reset rapide */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+/* Conteneur du formulaire */
+form {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Label */
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Champs input, select */
+input[type="file"],
+select {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 20px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+  cursor: pointer;
+}
+
+input[type="file"]:focus,
+select:focus {
+  border-color: #007BFF;
+  outline: none;
+}
+
+/* Bouton */
+button {
+  display: inline-block;
+  width: 100%;
+  padding: 10px 0;
+  background-color: #007BFF;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Message d’erreur ou succès (à styliser dans PHP si besoin) */
+.message {
+  max-width: 400px;
+  margin: 10px auto;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.message.error {
+  background-color: #ffdddd;
+  color: #a94442;
+  border: 1px solid #a94442;
+}
+
+.message.success {
+  background-color: #ddffdd;
+  color: #3c763d;
+  border: 1px solid #3c763d;
+}

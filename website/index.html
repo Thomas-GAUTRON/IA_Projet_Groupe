@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"></html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+    <form action="upload-pdf.php" method="post" enctype="multipart/form-data">
+        <label for="pdf">Sélectionnez un fichier PDF :</label><br>
+        <input type="file" name="pdf" id="pdf" accept="application/pdf" required><br><br>
+        <label for="category">Choisissez une catégorie :</label><br>
+        <select name="category" id="category" required>
+            <option value="">--Veuillez choisir une option--</option>
+            <option value="cat1">Catégorie 1</option>
+            <option value="cat2">Catégorie 2</option>
+            <option value="cat3">Catégorie 3</option>
+        </select><br><br>
+        <button type="submit">Envoyer</button>
+    </form>
+</body>
