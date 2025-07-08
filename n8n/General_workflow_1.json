@@ -1,55 +1,89 @@
 {
-  "name": "My workflow 3",
+  "name": "General_workflow",
   "nodes": [
     {
       "parameters": {
         "httpMethod": "POST",
         "path": "upload-pdf",
+        "responseMode": "responseNode",
         "options": {}
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -380,
-        -140
+        -580,
+        -20
       ],
-      "id": "aa77e47f-316f-4c0f-a898-4e17c0ef2d00",
+      "id": "1b2b8517-05f5-40e4-8e45-85e4738bdd91",
       "name": "Webhook",
       "webhookId": "461d9b79-3a71-497f-9b34-ea06203b85a7"
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "2c7af1a5-41f1-4d12-9d4f-0dda2249013d",
-              "leftValue": "={{ $json.body.category }}",
-              "rightValue": "cat1",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=Tu es un assistant pédagogique. Résume le texte suivant de manière claire, structurée et concise, sous forme de contenu HTML. Le résumé doit être lisible pour un étudiant et facilement intégrable dans une page web.\n\n- Utilise des balises HTML sémantiques simples : `<h1>`, `<h2>`, `<p>`, `<ul>`, `<li>`, etc.\n- Garde les notions importantes, définitions, concepts clés et exemples utiles.\n- Structure bien le contenu (titres, paragraphes, listes si nécessaire).\n- Ne dépasse pas 300 mots sauf si le texte est très long.\nTexte du cours à résumer :"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        120,
+        -100
+      ],
+      "id": "15c0def8-0d0f-47ab-846b-efb2646bad52",
+      "name": "Summeriser"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "pdf",
         "options": {}
       },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
       "position": [
-        -160,
+        -100,
         -140
       ],
-      "id": "12855a7d-e940-46aa-b87b-56ff0cd6cbf5",
-      "name": "If"
+      "id": "a969d377-09e9-47a4-99dd-1d12990d13ce",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "model": "mistral-small-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        100,
+        120
+      ],
+      "id": "76ee1e46-6048-4bd2-be17-86cf7bcb55fb",
+      "name": "Mistral Cloud Chat Model",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "igToiVvCLNYdILJ3",
+          "name": "Mistral Cloud account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        500,
+        -100
+      ],
+      "id": "17e565ab-efa8-45f2-ac3c-d4aac8f04e8c",
+      "name": "Respond to Webhook"
     }
   ],
   "pinData": {},
@@ -58,8 +92,41 @@
       "main": [
         [
           {
-            "node": "If",
+            "node": "Extract from File",
             "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summeriser": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Summeriser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Cloud Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summeriser",
+            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -70,10 +137,17 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "00310582-b731-48d2-bf6f-9180e8967db7",
+  "versionId": "8cc28fa2-37e2-4ee6-b992-b686219f798c",
   "meta": {
     "instanceId": "810a5a09711e83ddb9dde1ea087184f7d09c734cbbfe8841ddb8972af37936b2"
   },
   "id": "0EZwQkcdnHzSrWuP",
-  "tags": []
+  "tags": [
+    {
+      "createdAt": "2025-07-08T13:28:48.006Z",
+      "updatedAt": "2025-07-08T13:28:48.006Z",
+      "id": "8eab1q2e5wo2Uor2",
+      "name": "Alebra Project"
+    }
+  ]
 }
