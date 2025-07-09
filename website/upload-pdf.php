@@ -1,4 +1,5 @@
 <?php
+session_start(); 
 // Configuration : URL du webhook n8n
 $n8nWebhookUrl = 'https://n8n.louazon.fr/webhook-test/upload-pdf';
 
@@ -43,20 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo "<p>Erreur CURL : $error</p>";
             } else {
                 echo "<p>Fichier envoyé à n8n. Réponse HTTP : $httpCode</p>";
-
-                // Tente de décoder la réponse JSON
-                $jsonData = json_decode($response, true);
-
-                if (json_last_error() === JSON_ERROR_NONE) {
-                    echo "<h3>Résumé reçu de n8n :</h3>";
-                    if (isset($jsonData['resume'])) {
-                        echo "<pre>" . htmlspecialchars($jsonData['resume']) . "</pre>";
-                    } else {
-                        echo "<pre>" . print_r($jsonData, true) . "</pre>";
-                    }
-                } else {
-                    echo "<p>Réponse brute :</p><pre>" . htmlspecialchars($response) . "</pre>";
-                }
+                $_SESSION['response'] = $response;
+                header("Location: result.php");
             }
         } else {
             echo "<p>Le fichier n'est pas un PDF valide.</p>";
