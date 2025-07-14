@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 echo "<p>Fichier envoyé à n8n. Réponse HTTP : $httpCode</p>";
                 $_SESSION['response'] = $response;
-                header("Location: result.php");
+                header("Location: result");
             }
         } else {
             echo "<p>Le fichier n'est pas un PDF valide.</p>";
