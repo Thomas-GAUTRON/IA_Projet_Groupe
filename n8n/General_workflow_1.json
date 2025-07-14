@@ -11,10 +11,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -820,
-        -90
+        -360,
+        770
       ],
-      "id": "1b2b8517-05f5-40e4-8e45-85e4738bdd91",
+      "id": "7a2d95c9-7439-4c21-b697-d81a7569de65",
       "name": "Webhook",
       "webhookId": "461d9b79-3a71-497f-9b34-ea06203b85a7"
     },
@@ -23,16 +23,16 @@
         "promptType": "define",
         "text": "={{ $json.text }}",
         "options": {
-          "systemMessage": "Tu es un assistant pédagogique. Résume le texte suivant de manière claire, structurée et concise, sous forme de contenu HTML. Les formules mathématiques devrons être sous le format Math in Tex. Le résumé doit être lisible pour un étudiant et facilement intégrable dans une page web.\n\n- Utilise des balises HTML sémantiques simples : `<h1>`, `<h2>`, `<p>`, `<ul>`, `<li>`, etc.\n- Garde les notions importantes, définitions, concepts clés et exemples utiles.\n- Structure bien le contenu (titres, paragraphes, listes si nécessaire).\n- Ne dépasse pas 300 mots sauf si le texte est très long.\n- Retourne seulement la partie entre les balises <body> sans mettre ces dernières\n- ?\nTexte du cours à résumer :"
+          "systemMessage": "Tu es un assistant pédagogique spécialisé dans la synthèse de cours.\nTon objectif est de transformer un contenu brut en fiche de cours claire, synthétique et structurée.\n\nVoici ce que tu dois faire :\n    Titre du sujet (clair, précis)\n    Introduction courte (en 2-3 phrases)\n    Plan structuré en plusieurs parties avec :\n        Titres et sous-titres\n        Définitions importantes\n        Dates, chiffres clés ou lois (si applicable)\n        Schémas ou encadrés (si utile)\n    Exemples ou cas pratiques si pertinents\n    Conclusion / Points à retenir\n\nStyle attendu :\n    Clair, synthétique\n    Utilise des puces quand c’est pertinent\n    Met en gras les mots-clés importants\n    Pas de phrases trop longues\n    Idéal pour réviser rapidement\n\nContenu brut à transformer en fiche de cours :\n- Utilise des balises HTML sémantiques simples : `<h1>`, `<h2>`, `<p>`, `<ul>`, `<li>`, etc.\n- Garde les notions importantes, définitions, concepts clés et exemples utiles.\n- Structure bien le contenu (titres, paragraphes, listes si nécessaire).\n- Retourne seulement la partie entre les balises <body> sans mettre ces dernièresuq. Ne renvoie que ce qui est necessaire\nTexte du cours à résumer :"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.9,
       "position": [
-        -160,
-        -440
+        300,
+        420
       ],
-      "id": "15c0def8-0d0f-47ab-846b-efb2646bad52",
+      "id": "0134b89f-560c-445e-84ad-76f14ab1ac3f",
       "name": "Summeriser",
       "alwaysOutputData": false,
       "notesInFlow": false
@@ -46,39 +46,24 @@
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1,
       "position": [
-        -380,
-        -440
+        80,
+        420
       ],
-      "id": "a969d377-09e9-47a4-99dd-1d12990d13ce",
+      "id": "7f60b828-8e22-454f-8f39-1ac7a89918cb",
       "name": "Extract from File"
     },
     {
       "parameters": {
-        "respondWith": "json",
-        "responseBody": "={{ $json }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.2,
-      "position": [
-        656,
-        -90
-      ],
-      "id": "17e565ab-efa8-45f2-ac3c-d4aac8f04e8c",
-      "name": "Respond to Webhook"
-    },
-    {
-      "parameters": {
-        "modelName": "models/gemini-1.5-flash-8b-latest",
+        "modelName": "models/gemini-2.5-flash",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -72,
-        -220
+        388,
+        640
       ],
-      "id": "6a3637f5-0d75-469d-859a-a36f4839b4d1",
+      "id": "772f91e8-b82a-4816-82d9-33c952e209cd",
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
@@ -158,29 +143,6 @@
                 ],
                 "combinator": "and"
               }
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "id": "50d5e369-bce0-4bf2-a401-02209bf18bbd",
-                    "leftValue": "={{ $json.body.category }}",
-                    "rightValue": "ca",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              }
             }
           ]
         },
@@ -189,24 +151,24 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        -600,
-        -111
+        -140,
+        770
       ],
-      "id": "72f367bd-57f4-44ba-a895-177d9d01ec00",
+      "id": "0384666f-66a4-47a9-9448-9fc6b15042a8",
       "name": "Switch"
     },
     {
       "parameters": {
-        "modelName": "models/gemini-1.5-flash-8b-latest",
+        "modelName": "models/gemini-2.5-flash",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -72,
-        480
+        388,
+        1340
       ],
-      "id": "aefca39e-847c-4069-b675-a26ea805713a",
+      "id": "e601d434-1e53-41cf-9dae-43552ed2d51e",
       "name": "Google Gemini Chat Model1",
       "credentials": {
         "googlePalmApi": {
@@ -217,34 +179,19 @@
     },
     {
       "parameters": {
-        "operation": "pdf",
-        "binaryPropertyName": "pdf",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.extractFromFile",
-      "typeVersion": 1,
-      "position": [
-        -380,
-        260
-      ],
-      "id": "5cb3ca6c-3f4a-415b-a8fd-d72a08871701",
-      "name": "Extract from File2"
-    },
-    {
-      "parameters": {
         "promptType": "define",
         "text": "={{ $json.text }}",
         "options": {
-          "systemMessage": "Tu es un créateur de quiz pédagogique. Ta mission est de générer des quiz interactifs et pertinents sur un sujet donné.\nVoici les consignes : \n    Nombre de questions : 10\n    Format des questions :\n\n        Type : QCM (questions à choix multiples)\n\n        Chaque question doit proposer 1 bonne réponse et 3 distracteurs (mauvaises réponses)\n\n        Numérote les questions et les choix (A, B, C, D)\n\n    Niveau de difficulté : Progressif\n\n    Langue : Français\n\nPour chaque question, donne :\n\n    La question\n\n    Les 4 réponses possibles\n\n    La bonne réponse clairement identifiée\n\n Une explication ou un contexte pédagogique après la réponse\n\nExemple de format attendu :\n<div class=\"question-block\" data-question=\"q1\" data-correct=\"B\">\n  <div class=\"question\">\n    <h2>Question 1 : Quel est l’élément HTML utilisé pour insérer une image ?</h2>\n    <input type=\"radio\" name=\"q1\" value=\"A\"> &lt;link&gt;<br>\n    <input type=\"radio\" name=\"q1\" value=\"B\"> &lt;img&gt;<br>\n    <input type=\"radio\" name=\"q1\" value=\"C\"> &lt;src&gt;<br>\n    <input type=\"radio\" name=\"q1\" value=\"D\"> &lt;picture&gt;<br>\n  </div>\n\n  <div class=\"reponse\" style=\"display:none;\">\n    ✅ Bonne réponse : B\n  </div>\n  <div class=\"explication\" style=\"display:none;\">\n    ℹ️ L’élément &lt;img&gt; permet d’afficher une image sur une page web. L’attribut src définit le chemin de l’image.\n  </div>\n</div>"
+          "systemMessage": "Objectif\n\nTu es un créateur de quiz pédagogique. Ta mission est de générer des quiz interactifs, pertinents et autoportants sur un sujet donné, à partir d’un contenu que tu as analysé, sans jamais y faire référence explicitement.\n\nConsignes\n\n- Nombre de questions : 10  \n- Type de questions : QCM (Questions à Choix Multiples)  \n  - Chaque question propose 1 bonne réponse et 3 distracteurs (mauvaises réponses).\n  - Les questions doivent être formulées de manière autonome, sans mentionner :\n    - Le document source\n    - Les titres, sections, ou sous-sections\n    - Les numéros de définition (*ex: \"selon la définition 1.1...\"*)\n    - Les phrases comme *\"comme vu précédemment...\"*, *\"selon le texte...\"*, etc.\n- Niveau de difficulté: Progressif (du plus simple au plus complexe)\n- Langue: Français\n\nFormat attendu pour chaque question\n\nChaque question doit être rendue sous la forme HTML suivante :\n\n<div class=\"question-block\" data-question=\"q1\" data-correct=\"B\">\n  <div class=\"question\">\n    <h2>Question 1 : Quel est l’élément HTML utilisé pour insérer une image ?</h2>\n    <input type=\"radio\" name=\"q1\" value=\"A\"><link><br>\n    <input type=\"radio\" name=\"q1\" value=\"B\"> <img><br>\n    <input type=\"radio\" name=\"q1\" value=\"C\"> <src><br>\n    <input type=\"radio\" name=\"q1\" value=\"D\"> <picture><br>\n  </div>\n\n  <div class=\"reponse_bon\" style=\"display:none;\">\n    ✅ Bonne réponse\n  </div>\n  <div class=\"reponse_mauvais\" style=\"display:none;\">\n    ❌ Mauvaise réponse\n  </div>\n  <div class=\"explication\" style=\"display:none;\">\n    ℹ️ L’élément <img> permet d’afficher une image sur une page web. L’attribut src définit le chemin de l’image.\n  </div>\n</div>"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.9,
       "position": [
-        -160,
-        260
+        300,
+        1120
       ],
-      "id": "590716b4-e0a4-4f7c-a54b-37b40bb74bc7",
+      "id": "4b5229aa-79ba-4370-99ef-1c5dffa99c0f",
       "name": "Quizer",
       "alwaysOutputData": false,
       "notesInFlow": false
@@ -258,10 +205,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.1,
       "position": [
-        436,
-        -90
+        896,
+        770
       ],
-      "id": "0b18001c-ac33-4833-975e-a16d75436aed",
+      "id": "cb8ab36f-2eb2-4b58-87f7-559a06c8941c",
       "name": "Merge",
       "alwaysOutputData": false
     },
@@ -274,10 +221,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        216,
-        10
+        676,
+        870
       ],
-      "id": "9dd96987-e8ae-42a8-a756-87364f408434",
+      "id": "c40d2677-f971-4242-9380-c02835cc8017",
       "name": "Edit Fields"
     },
     {
@@ -289,10 +236,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        216,
-        -190
+        676,
+        670
       ],
-      "id": "02d7db2c-2c99-4d51-9a0c-c59125d112ec",
+      "id": "f4c0b0ec-0804-4951-90b4-3ee2a4f2521b",
       "name": "Edit Fields1"
     },
     {
@@ -312,10 +259,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        216,
-        -440
+        676,
+        420
       ],
-      "id": "3fa3671b-3be9-4ed5-ba09-615e0b891a8f",
+      "id": "67709875-7224-4a09-adbd-5b8644b2c9e7",
       "name": "Edit Fields2"
     },
     {
@@ -335,11 +282,165 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        216,
-        260
+        676,
+        1120
       ],
-      "id": "2525eb21-0005-40c3-b364-d6e2854c37c0",
+      "id": "6e2a882e-551f-4e56-b8af-6beafd3f1a77",
       "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "test",
+          "mode": "list",
+          "cachedResultName": "test"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.1,
+      "position": [
+        1132,
+        770
+      ],
+      "id": "7ba2f5b5-3625-468c-a39b-3b5e9392e329",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "kJMQSgDEirK4xR3X",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        1116,
+        990
+      ],
+      "id": "6a303d39-dd6c-4466-a35a-3af9c0758255",
+      "name": "Embeddings Mistral Cloud",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "igToiVvCLNYdILJ3",
+          "name": "Mistral Cloud account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        1236,
+        992.5
+      ],
+      "id": "187069f5-0df3-45fe-996b-261fc36b87c8",
+      "name": "Default Data Loader",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1324,
+        1190
+      ],
+      "id": "0c1c75e3-8ade-4c73-8ad3-7c62600b47be",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        80,
+        1120
+      ],
+      "id": "964eda2f-d8fa-471e-a86b-e3af55a8451b",
+      "name": "Extract from File2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "test",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id_request",
+              "condition": "eq",
+              "keyValue": "-1"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "id_request",
+              "fieldValue": "={{ $json.rand }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1832,
+        670
+      ],
+      "id": "49c1f03a-e127-44ee-a359-535029e956ca",
+      "name": "Supabase1",
+      "alwaysOutputData": false,
+      "credentials": {
+        "supabaseApi": {
+          "id": "kJMQSgDEirK4xR3X",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nimport random\nreturn {\"rand\":random.getrandbits(50)}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1612,
+        770
+      ],
+      "id": "1d7ba24a-8c61-424c-9835-e8485226b66a",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.rand }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        1832,
+        870
+      ],
+      "id": "37c98d40-621b-42da-9ff7-1fd765d4d1d3",
+      "name": "Respond to Webhook"
     }
   ],
   "pinData": {},
@@ -404,24 +505,24 @@
         ],
         [
           {
-            "node": "Extract from File2",
+            "node": "Extract from File",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Extract from File",
+            "node": "Extract from File2",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Extract from File2",
+            "node": "Edit Fields1",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Edit Fields1",
+            "node": "Extract from File2",
             "type": "main",
             "index": 0
           }
@@ -434,17 +535,6 @@
           {
             "node": "Quizer",
             "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Extract from File2": {
-      "main": [
-        [
-          {
-            "node": "Quizer",
-            "type": "main",
             "index": 0
           }
         ]
@@ -465,7 +555,7 @@
       "main": [
         [
           {
-            "node": "Respond to Webhook",
+            "node": "Supabase Vector Store",
             "type": "main",
             "index": 0
           }
@@ -515,13 +605,89 @@
           }
         ]
       ]
+    },
+    "Embeddings Mistral Cloud": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File2": {
+      "main": [
+        [
+          {
+            "node": "Quizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Supabase1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "5bded57b-9fc5-4d9e-9078-e4ee3a48d0a5",
+  "versionId": "8028cd80-ac69-4692-86f6-5c886f957559",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "810a5a09711e83ddb9dde1ea087184f7d09c734cbbfe8841ddb8972af37936b2"
