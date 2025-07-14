@@ -1,9 +1,9 @@
 <?php
-session_start(); 
+include 'begin_php.php';
 // Configuration : URL du webhook n8n
-$n8nWebhookUrl = 'https://n8n.louazon.fr/webhook-test/upload-pdf';
+$n8nWebhookUrl =  $config['n8n_webhook_url_base'] . $config['n8n_webhook_url_test'] . $config['n8n_webhook_url_end'] ;
 
-// Vérifie que la requête est bien un POST avec fichier
+// Vérifie que la requête est bien un POST avec fichiers
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_FILES['pdf']) && $_FILES['pdf']['error'] === UPLOAD_ERR_OK) {
         $fileTmpPath = $_FILES['pdf']['tmp_name'];

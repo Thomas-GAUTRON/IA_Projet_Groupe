@@ -49,7 +49,7 @@ if (curl_errno($ch)) {
         else{
             echo $page;
         }
-       # echo "<button onclick=\"corriger()\">Valider mes réponses</button>";
+        echo "<button onclick=\"corriger()\">Valider mes réponses</button>";
         echo "<div id=\"score\"></div></div>";
 
     }
