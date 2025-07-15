@@ -7,18 +7,44 @@
     --spacing-unit: 1rem;
 }
 
-/* Reset et styles de base */
+/* Reset rapide */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: var(--text-color);
-    background-color: var(--background-color);
+h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--primary-color);
+}
+
+h2 {
+    margin-bottom: 1.5rem;
+    color: var(--secondary-color);
+}
+
+
+/* Conteneur du formulaire */
+form {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Label */
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #555;
 }
 
 /* Header et Navigation */
@@ -46,69 +72,130 @@ nav a:hover {
     color: var(--primary-color);
 }
 
-/* Main Content */
-main {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 0 var(--spacing-unit);
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 2rem;
-    color: var(--primary-color);
-}
-
-h2 {
-    margin-bottom: 1.5rem;
-    color: var(--secondary-color);
-}
-
-/* Form Styling */
-.upload-section {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.upload-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-label {
-    font-weight: 500;
-}
-
+/* Champs input, select */
 input[type="file"],
 select {
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 100%;
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 20px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+  cursor: pointer;
 }
 
-.submit-btn {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.3s ease;
+input[type="file"]:focus,
+select:focus {
+  border-color: #007BFF;
+  outline: none;
 }
 
-.submit-btn:hover {
-    background-color: #0056b3;
+/* Bouton */
+button {
+  display: inline-block;
+  width: 100%;
+  padding: 10px 0;
+  background-color: #007BFF;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Message d’erreur ou succès */
+.message {
+  max-width: 400px;
+  margin: 10px auto;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.message.error {
+  background-color: #ffdddd;
+  color: #a94442;
+  border: 1px solid #a94442;
+}
+
+.message.success {
+  background-color: #ddffdd;
+  color: #3c763d;
+  border: 1px solid #3c763d;
+}
+
+/* ----------------------------- */
+/* QUIZ : Styles supplémentaires */
+/* ----------------------------- */
+
+.question-block {
+  background-color: #fff;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  padding: 15px 20px;
+  margin: 20px auto;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: border 0.3s ease;
+}
+
+/* Titre de la question */
+.question h2 {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+/* Options radio */
+.question input[type="radio"] {
+  margin-right: 8px;
+  margin-bottom: 6px;
+}
+
+/* Réponses */
+.reponse_bon,
+.reponse_mauvais,
+.explication {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  display: none;
+}
+
+/* Bonne réponse */
+.reponse_bon {
+  background-color: #ddffdd;
+  color: #3c763d;
+  border: 1px solid #3c763d;
+}
+
+/* Mauvaise réponse */
+.reponse_mauvais {
+  background-color: #ffdddd;
+  color: #a94442;
+  border: 1px solid #a94442;
+}
+
+/* Explication */
+.explication {
+  background-color: #e7f1ff;
+  color: #004085;
+  border: 1px solid #b8daff;
+}
+
+/* Score */
+#score {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 30px;
+  color: #333;
 }
 
 /* Footer */
@@ -118,17 +205,4 @@ footer {
     background-color: white;
     border-top: 1px solid #ddd;
     margin-top: 3rem;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    nav ul {
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .upload-section {
-        padding: 1rem;
-    }
 }

@@ -38,15 +38,20 @@ if (curl_errno($ch)) {
     });
 
     if (!empty($data) && isset($data[0]['content'])) {
+        $result =  "";
         foreach ($data as $row) {
             if (isset($row['metadata'])) {
                 $metadata = json_decode($row['metadata'], true);
                 if (isset($metadata['line']) && isset($row['content']) && $metadata['line'] == 1) {
-                    echo $row['content'] . "\n\n"; // Séparé par deux sauts de ligne
+                    $result = $result . $row['content'] . "\n\n"; // Séparé par deux sauts de ligne
                 }
             }    
         }
+
+        echo $result;
     }
 }
 
 curl_close($ch);
+include "footer.html"
+?>
