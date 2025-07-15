@@ -1,0 +1,117 @@
+/* Reset de base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f5f7fa;
+  color: #333;
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Titre du cours */
+#course-title {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  text-align: center;
+  color: #222;
+}
+
+/* Conteneur du quiz */
+#quiz-container {
+  max-width: 600px;
+  width: 100%;
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Question */
+.question-block {
+  margin-bottom: 20px;
+}
+
+/* Choix */
+.choice {
+  background: #f0f0f0;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.choice:hover {
+  background: #e6e6e6;
+  transform: scale(1.01);
+}
+
+/* Styles conditionnels */
+.correct {
+  background-color: #d4edda;
+  border-left: 4px solid #28a745;
+}
+
+.incorrect {
+  background-color: #f8d7da;
+  border-left: 4px solid #dc3545;
+}
+
+/* Explication */
+.explanation {
+  margin-top: 15px;
+  font-style: italic;
+  color: #555;
+}
+
+/* Bouton suivant / PDF */
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s;
+  display: block;
+  margin: 25px auto 0;
+}
+
+button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Bouton PDF */
+#download-pdf {
+  background-color: #28a745;
+  margin-bottom: 25px;
+}
+
+#download-pdf:hover {
+  background-color: #218838;
+}
+
+/* Message de score final */
+#quiz-container h2 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+#quiz-container p {
+  font-size: 1.2rem;
+  text-align: center;
+}

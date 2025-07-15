@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<head>
+    <title>Résultats d'extraction</title>
+</head>
+<body>
+    <h1>Résultat par fichier</h1>
+    {% for item in results %}
+        <!--<h2>{{ filename }}</h2>-->
+        <textarea rows="20" cols="100">{{ text }}</textarea>
+        <hr>
+    {% endfor %}
+    <br>
+    <a href="/">Revenir au formulaire</a>
+</body>
+</html>
