@@ -17,6 +17,8 @@ def upload_file():
         selected_option = request.form.get('option')
         mod = request.form.get('mod')
         files = request.files.getlist('files')
+        if not files or (len(files) == 1 and files[0].filename == ''):
+            files = request.files.getlist('files[]')
 
         #print(selected_option)
         #print(files)
@@ -53,7 +55,7 @@ def upload_file():
             print(f"\n{i}")
             temp+=1
 
-        return render_template('result.html', results=out_ai)#result = final array for abstract
+        return out_ai # result = final array for abstract
 
     return render_template('index.html')
 if __name__ == "__main__":

@@ -4,8 +4,9 @@ from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 class AI:
-    def __init__(self,key = os.environ['GOOGLE_API_KEY'],mod = "gemini-2.5-flash",temp=0):
-        self.key = key
+    def __init__(self,key = None,mod = "gemini-2.5-flash",temp=0):
+        if key is None:
+            key = os.environ.get('GOOGLE_API_KEY')
         self.model = mod
         self.temp = temp
         self.llm = None
