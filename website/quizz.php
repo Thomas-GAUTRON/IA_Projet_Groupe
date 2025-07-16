@@ -54,32 +54,7 @@ if (preg_match('/```json(.*?)```/s',  $page, $matches)) {
     const quizData = <?php echo $contenu; ?>;
   </script>
   <script src="assets/js/script.js"></script>
-  <script>
-    const buttons = document.querySelectorAll('.tab-button');
-    const quizPane = document.getElementById('quiz-pane');
-    const resumePane = document.getElementById('resume-pane');
-
-    buttons.forEach(button => {
-      button.addEventListener('click', () => {
-        // Réinitialise les boutons
-        buttons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-
-        const view = button.dataset.view;
-
-        if (view === 'quiz') {
-          quizPane.classList.remove('hidden');
-          resumePane.classList.add('hidden');
-        } else if (view === 'resume') {
-          quizPane.classList.add('hidden');
-          resumePane.classList.remove('hidden');
-        } else {
-          quizPane.classList.remove('hidden');
-          resumePane.classList.remove('hidden');
-        }
-      });
-    });
-  </script>
+  
 </head>
 
 <body>
@@ -110,6 +85,32 @@ if (preg_match('/```json(.*?)```/s',  $page, $matches)) {
        ?></p>
     </div>
   </div>
+  <script>
+    const buttons = document.querySelectorAll('.tab-button');
+    const quizPane = document.getElementById('quiz-pane');
+    const resumePane = document.getElementById('resume-pane');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Réinitialise les boutons
+        buttons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        const view = button.dataset.view;
+
+        if (view === 'quiz') {
+          quizPane.classList.remove('hidden');
+          resumePane.classList.add('hidden');
+        } else if (view === 'resume') {
+          quizPane.classList.add('hidden');
+          resumePane.classList.remove('hidden');
+        } else {
+          quizPane.classList.remove('hidden');
+          resumePane.classList.remove('hidden');
+        }
+      });
+    });
+  </script>
  <?php // include "footer.html"; ?>
  
 </body>
