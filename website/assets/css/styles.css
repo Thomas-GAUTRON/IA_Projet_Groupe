@@ -1,201 +1,174 @@
-/* Variables */
-:root {
-    --primary-color: #007bff;
-    --secondary-color: #6c757d;
-    --background-color: #f8f9fa;
-    --text-color: #333;
-    --spacing-unit: 1rem;
-}
-
-/* Reset rapide */
+/* Reset de base */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f5f7fa;
   color: #333;
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-h1 {
-    text-align: center;
-    margin-bottom: 2rem;
-    color: var(--primary-color);
+/* Titre du cours */
+#course-title {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  text-align: center;
+  color: #222;
 }
 
-h2 {
-    margin-bottom: 1.5rem;
-    color: var(--secondary-color);
-}
-
-
-/* Conteneur du formulaire */
-form {
-  max-width: 400px;
-  margin: 40px auto;
-  padding: 20px;
-  background: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-/* Label */
-label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
-  font-size: 14px;
-  color: #555;
-}
-
-/* Header et Navigation */
-header {
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: var(--spacing-unit);
-}
-
-nav ul {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-}
-
-nav a {
-    text-decoration: none;
-    color: var(--text-color);
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-nav a:hover {
-    color: var(--primary-color);
-}
-
-/* Champs input, select */
-input[type="file"],
-select {
+/* Conteneur du quiz */
+#quiz-container {
+  max-width: 600px;
   width: 100%;
-  padding: 8px 10px;
-  margin-bottom: 20px;
-  border: 1.5px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.3s ease;
-  cursor: pointer;
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-input[type="file"]:focus,
-select:focus {
-  border-color: #007BFF;
-  outline: none;
-}
-
-/* Bouton */
-button {
-  display: inline-block;
-  width: 100%;
-  padding: 10px 0;
-  background-color: #007BFF;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  font-weight: 700;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-/* Message d’erreur ou succès */
-.message {
-  max-width: 400px;
-  margin: 10px auto;
-  padding: 12px;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.message.error {
-  background-color: #ffdddd;
-  color: #a94442;
-  border: 1px solid #a94442;
-}
-
-.message.success {
-  background-color: #ddffdd;
-  color: #3c763d;
-  border: 1px solid #3c763d;
-}
-
-/* ----------------------------- */
-/* QUIZ : Styles supplémentaires */
-/* ----------------------------- */
-
+/* Question */
 .question-block {
-  background-color: #fff;
-  border: 2px solid #ccc;
+  margin-bottom: 20px;
+}
+
+/* Choix */
+.choice {
+  background: #f0f0f0;
+  padding: 12px;
+  margin: 8px 0;
   border-radius: 8px;
-  padding: 15px 20px;
-  margin: 20px auto;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  transition: border 0.3s ease;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
 }
 
-/* Titre de la question */
-.question h2 {
-  font-size: 16px;
-  margin-bottom: 12px;
+.choice:hover {
+  background: #e6e6e6;
+  transform: scale(1.01);
 }
 
-/* Options radio */
-.question input[type="radio"] {
-  margin-right: 8px;
-  margin-bottom: 6px;
+/* Styles conditionnels */
+.correct {
+  background-color: #d4edda;
+  border-left: 4px solid #28a745;
 }
 
-/* Réponses */
-.reponse_bon,
-.reponse_mauvais,
-.explication {
-  margin-top: 12px;
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 14px;
-  display: none;
-}
-
-/* Bonne réponse */
-.reponse_bon {
-  background-color: #ddffdd;
-  color: #3c763d;
-  border: 1px solid #3c763d;
-}
-
-/* Mauvaise réponse */
-.reponse_mauvais {
-  background-color: #ffdddd;
-  color: #a94442;
-  border: 1px solid #a94442;
+.incorrect {
+  background-color: #f8d7da;
+  border-left: 4px solid #dc3545;
 }
 
 /* Explication */
-.explication {
-  background-color: #e7f1ff;
-  color: #004085;
-  border: 1px solid #b8daff;
+.explanation {
+  margin-top: 15px;
+  font-style: italic;
+  color: #555;
 }
 
-/* Score */
-#score {
+/* Bouton suivant / PDF */
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s;
+  display: block;
+  margin: 25px auto 0;
+}
+
+button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Bouton PDF */
+#download-pdf {
+  background-color: #28a745;
+  margin-bottom: 25px;
+}
+
+#download-pdf:hover {
+  background-color: #218838;
+}
+
+/* Message de score final */
+#quiz-container h2 {
   text-align: center;
-  font-size: 18px;
-  font-weight: 600;
-  margin-top: 30px;
-  color: #333;
+  margin-bottom: 15px;
+}
+
+#quiz-container p {
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.tab-button.active {
+  background-color: white;
+  font-weight: bold;
+  border: 2px solid #007bff;
+  color: #007bff;
+}
+
+.container {
+  display: flex;
+  gap: 20px;
+}
+
+.pane {
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.hidden {
+  display: none;
+}
+
+button {
+  padding: 10px 15px;
+  font-size: 1rem;
+  cursor: pointer;
 }
 
 /* Footer */

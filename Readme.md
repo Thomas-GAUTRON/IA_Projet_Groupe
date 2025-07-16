@@ -2,50 +2,59 @@
 
 ## Présentation
 
-Ce projet est une plateforme web d’analyse de documents PDF, permettant de générer automatiquement des résumés structurés et des quiz interactifs à partir de fichiers PDF. Il s’appuie sur Supabase pour le stockage des données et n8n pour l’automatisation des workflows d’analyse et de génération de contenu.
+**IA_Projet_Groupe** est une plateforme web complète permettant d’analyser des documents PDF, de générer automatiquement des résumés pédagogiques et des quiz interactifs à partir de leur contenu, grâce à l’intelligence artificielle (Google Gemini, Mistral, etc.).  
+Le projet combine un backend Python (Flask), une interface web PHP/JS, l’automatisation via n8n, et le stockage des résultats sur Supabase.
+
+---
 
 ## Fonctionnalités principales
 
-- **Upload de PDF** : L’utilisateur peut téléverser un document PDF via l’interface web.
-- **Génération de résumé** : Un résumé pédagogique et structuré est généré automatiquement à partir du contenu du PDF.
-- **Génération de quiz** : Un quiz interactif à choix multiples (QCM) est généré à partir du contenu du PDF.
-- **Navigation web** : Accès rapide aux différentes sections (Accueil, Résumés, Quiz).
-- **Correction automatique** : Les réponses du quiz sont corrigées instantanément côté client avec explications.
+- **Téléversement de PDF** : Interface web pour uploader un ou plusieurs fichiers PDF.
+- **Extraction et traitement IA** : Extraction du texte, génération de résumés et de quiz QCM via des prompts IA personnalisés.
+- **Restitution dynamique** : Résumés et quiz affichés dynamiquement, correction instantanée côté client.
+- **Téléchargement** : Export du quiz au format PDF.
+- **Automatisation** : Orchestration complète via n8n (workflows personnalisables).
+- **Stockage cloud** : Résultats sauvegardés et consultables via Supabase.
+- **Personnalisation** : Prompts IA, styles, et workflows adaptables.
+
+---
 
 ## Architecture technique
 
-- **Frontend** :
-  - HTML5, CSS3 (responsive, moderne)
-  - JavaScript (validation, correction quiz)
-  - PHP (affichage dynamique, récupération des données Supabase)
-- **Backend & automatisation** :
-  - [n8n](https://n8n.io/) pour l’orchestration des workflows (extraction texte, génération résumé/quiz, stockage Supabase)
-  - [Supabase](https://supabase.com/) pour la base de données et l’API REST
+### 1. Frontend (website/)
 
-## Section technique : Comment ça fonctionne ?
+- **PHP** : Pages dynamiques (index.php, result.php, resume.php, quizz.php, call_flask.php…)
+- **HTML/CSS** : Interface responsive (`assets/css/styles.css`)
+- **JavaScript** : Correction automatique des quiz (`assets/js/script.js`)
+- **Templates** : header.html, footer.html
 
-### 1. Téléversement et déclenchement du workflow
-- L’utilisateur envoie un PDF via le formulaire web (`index.html`/`upload-pdf.php`).
-- Le fichier est transmis à un webhook n8n (`upload-pdf`).
+### 2. Backend Python (basic/)
 
-### 2. Extraction et traitement du contenu
-- n8n extrait le texte du PDF.
-- Selon la catégorie choisie (Résumé, Quiz, ou les deux), n8n :
-  - Résume le texte via un agent IA (Google Gemini, Mistral, etc.)
-  - Génère un quiz QCM structuré en HTML via un prompt dédié
+- **Flask** : API pour l’upload, l’extraction, l’appel à l’IA et le rendu de templates (`app.py`)
+- **Traitement PDF** : Extraction du texte via PyPDF2 (`classes.py`)
+- **Génération IA** : Prompts et appels à Google Gemini/Mistral (`gemini_incl.py`, `Prompt.txt`)
+- **Quiz JS** : Interface quiz autonome (`quiz_part/` : index.html, quiz.js, quiz.json, styles.css)
 
-### 3. Stockage et restitution
-- Les résultats (résumé structuré, quiz HTML) sont stockés dans Supabase (table `test`).
-- Les pages PHP (`resume.php`, `quizz.php`) récupèrent dynamiquement les données via l’API REST Supabase.
-- Le quiz est affiché avec des balises HTML spécifiques pour permettre la correction automatique côté client.
+### 3. Automatisation & Stockage
 
-### 4. Correction instantanée côté client
-- Le script JS (`script.js`) gère la validation des réponses et l’affichage des explications/corrections sans recharger la page.
-- Les blocs `.reponse_bon`, `.reponse_mauvais` et `.explication` sont affichés selon la réponse de l’utilisateur.
+- **n8n/** : Workflows d’automatisation (extraction, génération, stockage, notifications…)
+- **Supabase** : Stockage des résultats (résumés, quiz, métadonnées)
 
-### 5. Automatisation et personnalisation
-- Le workflow n8n (`General_workflow_1.json`) orchestre toutes les étapes : réception, extraction, génération IA, stockage, réponse à l’utilisateur.
-- Les prompts IA sont personnalisables pour adapter le style des résumés ou la difficulté des quiz.
+---
+
+## Schéma de fonctionnement
+
+1. **Upload** : L’utilisateur charge un ou plusieurs PDF via l’interface web.
+2. **Traitement** :
+   - Le backend Python extrait le texte, prépare les données.
+   - L’IA génère un résumé et/ou un quiz selon l’option choisie.
+3. **Automatisation** :
+   - n8n orchestre l’envoi, la génération, le stockage et la restitution.
+4. **Restitution** :
+   - Les résultats sont affichés dynamiquement (résumé, quiz interactif, score, explications).
+   - Possibilité de télécharger le quiz en PDF.
+5. **Stockage** :
+   - Les résultats sont sauvegardés sur Supabase et consultables à tout moment.
 
 ---
 
@@ -53,55 +62,159 @@ Ce projet est une plateforme web d’analyse de documents PDF, permettant de gé
 
 ```
 IA_Projet_Groupe/
-  Readme.md
-  n8n/
-    General_workflow_1.json
-  website/
-    index.html
-    quizz.php
-    resume.php
-    result.php
-    upload-pdf.php
-    begin_php.php
-    header.html
-    footer.html
-    config.config
-    assets/
-      css/
-        styles.css
-      js/
-        script.js
-      images/
+│
+├── basic/                # Backend Python (Flask, IA, extraction PDF)
+│   ├── app.py
+│   ├── classes.py
+│   ├── gemini_incl.py
+│   ├── Prompt.txt
+│   ├── requirements.txt
+│   ├── result_prep.py
+│   ├── ex.json
+│   ├── program.py
+│   ├── test.py
+│   ├── templates/
+│   │   ├── index.html
+│   │   └── result.html
+│   └── quiz_part/
+│       ├── index.html
+│       ├── quiz.js
+│       ├── quiz2.js
+│       ├── quiz.json
+│       └── styles.css
+│
+├── n8n/                  # Workflows d’automatisation
+│   └── General_workflow_1.json
+│
+├── website/              # Frontend PHP/JS
+│   ├── index.php
+│   ├── result.php
+│   ├── result2.php
+│   ├── resume.php
+│   ├── quizz.php
+│   ├── call_flask.php
+│   ├── all_generate.php
+│   ├── change.php
+│   ├── begin_php.php
+│   ├── header.html
+│   ├── footer.html
+│   ├── config_example.config
+│   ├── conf.config
+│   └── assets/
+│       ├── css/
+│       │   └── styles.css
+│       └── js/
+│           └── script.js
+│
+└── Readme.md
 ```
 
-## Installation & lancement
+---
 
-1. **Prérequis**
-   - PHP 8+
-   - Serveur web local (WAMP, XAMPP, etc.)
-   - Accès à Supabase (crédits dans `config.config`)
-   - n8n installé et configuré
+## Installation & configuration
 
-2. **Configuration**
-   - Copier `config_example.config` en `config.config` et renseigner les clés Supabase et URLs n8n.
+### Prérequis
+
+- Python 3.10+
+- PHP 8+
+- Serveur web local (WAMP, XAMPP, etc.)
+- n8n (auto-hébergé ou cloud)
+- Compte Supabase (base de données PostgreSQL)
+- Clé API Google Gemini (ou autre IA compatible)
+
+### Dépendances Python
+
+Dans `basic/requirements.txt` :
+```
+Flask
+PyPDF2
+```
+Installer avec :
+```bash
+pip install -r basic/requirements.txt
+```
+
+### Configuration
+
+1. **Supabase & n8n**  
+   Copier `website/config_example.config` en `website/conf.config` et renseigner :
+   - `supabase_url` : URL de votre projet Supabase
+   - `supabase_key` : clé API (publique)
+   - `table_name` : nom de la table (ex : documents)
+   - `n8n_webhook_url_*` : URLs de vos webhooks n8n
+
+2. **Backend Python**  
+   - Placer vos clés API IA dans les variables d’environnement ou un fichier `.env` (pour Google Gemini).
 
 3. **Lancement**
-   - Placer le dossier `website/` dans le répertoire web de votre serveur (ex : `www/` sous WAMP).
-   - Démarrer le serveur web.
-   - Accéder à `http://localhost/IA_Projet_Groupe/website/index.html`.
-   - Démarrer n8n et activer le workflow `General_workflow_1.json`.
+   - Démarrer le backend Flask :
+     ```bash
+     cd basic
+     python app.py
+     ```
+   - Démarrer le serveur web (WAMP/XAMPP) et accéder à `http://localhost/IA_Projet_Groupe/website/index.php`
+   - Démarrer n8n et activer le workflow `General_workflow_1.json`
+
+---
 
 ## Utilisation
 
-- **Accueil** : Téléversez un PDF et choisissez le type d’analyse (Résumé, Quiz, ou les deux).
-- **Résumés** : Consultez les résumés générés.
-- **Quiz** : Répondez aux quiz générés automatiquement et obtenez votre score instantanément.
+- **Accueil** : Téléversez un ou plusieurs PDF, choisissez le type d’analyse (Résumé, Quiz, ou les deux).
+- **Résumés** : Consultez les résumés générés (format texte enrichi, markdown).
+- **Quiz** : Répondez aux quiz générés automatiquement, correction instantanée, explications détaillées, score affiché.
+- **Téléchargement** : Exportez le quiz au format PDF.
+- **Personnalisation** : Modifiez les prompts IA (`Prompt.txt`), les styles CSS, ou les workflows n8n selon vos besoins.
 
-## Personnalisation
+---
 
-- Les styles sont modifiables dans `assets/css/styles.css`.
-- Le workflow n8n peut être adapté pour d’autres types de documents ou d’analyses.
+## Exemples de formats générés
 
+### Résumé (extrait)
+```
+---ABSTRACT START---
+Le document traite des principes fondamentaux de l’optique, notamment la réfraction, la réflexion et la vitesse de la lumière...
+---ABSTRACT END---
+```
+
+### Quiz (extrait de quiz.json)
+```json
+{
+    "courseTitle": "Cours de Physique - Optique",
+    "quiz": [
+        {
+            "question": "Qu'est-ce que la réfraction ?",
+            "choices": [
+                "Changement de direction de la lumière",
+                "Absorption de lumière",
+                "Diffusion",
+                "Réflexion"
+            ],
+            "answer": "Changement de direction de la lumière",
+            "explanation": "La réfraction est le changement de direction d'une onde lorsqu'elle passe d'un milieu à un autre."
+        }
+    ]
+}
+```
+
+---
+
+## Personnalisation avancée
+
+- **Prompts IA** : Modifiez `Prompt.txt` ou les prompts dans `gemini_incl.py` pour adapter le style, la langue, la difficulté, etc.
+- **Workflows n8n** : Personnalisez `n8n/General_workflow_1.json` pour ajouter des étapes (notifications, stockage avancé, etc.).
+- **Styles** : Adaptez `website/assets/css/styles.css` et `basic/quiz_part/styles.css` pour personnaliser l’UI.
+- **Quiz JS** : Modifiez `basic/quiz_part/quiz.js` pour changer la logique ou l’affichage du quiz.
+
+---
+
+## Dépannage
+
+- **Problème d’API IA** : Vérifiez la clé dans `.env` ou les variables d’environnement.
+- **Erreur Supabase** : Vérifiez l’URL, la clé et le nom de la table dans `conf.config`.
+- **n8n** : Assurez-vous que le workflow est actif et que les webhooks sont accessibles.
+- **PDF non traité** : Vérifiez les logs Flask et la compatibilité du PDF.
+
+---
 
 ## Auteurs
 
