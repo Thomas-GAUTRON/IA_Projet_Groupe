@@ -4,7 +4,8 @@ import os
 import gemini_incl as gem
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'uploads'
+current_directory = os.path.dirname(os.path.abspath(__file__))
+app.config['UPLOAD_FOLDER'] = f'{current_directory}/uploads'
 
 def create_last_dict(files,tab):
     last_dict={}

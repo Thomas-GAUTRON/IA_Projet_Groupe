@@ -19,7 +19,7 @@ class AI:
     def key_setup(self):
         if "GOOGLE_API_KEY" not in os.environ:
             print("Error in environment key, using .env instead")
-            load_dotenv()
+            load_dotenv("../.env")
             self.key = os.getenv("GOOGLE_API_KEY")
             print(self.key)
             if type(self.key) != type("str"):
@@ -96,7 +96,8 @@ class AI:
 
         output_format="**Output Format:** The output must be format that can be saved directly as a json file like the following :"
         ex_json_file=""
-        with open("ex.json", "r", encoding="utf-8") as f:
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        with open(f"{current_directory}/ex.json", "r", encoding="utf-8") as f:
             ex_json_file = f.read()
 
         if type == 1:
