@@ -40,6 +40,7 @@ if (preg_match('/```json(.*?)```/s',  $page, $matches)) {
   $contenu = trim($matches[1]); // On enlève les espaces inutiles
 }
 ?>
+<?php if (!isset($_SESSION['access_token'])) { header('Location: login.php'); exit; } ?>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -58,6 +59,7 @@ if (preg_match('/```json(.*?)```/s',  $page, $matches)) {
 </head>
 
 <body>
+<?php afficher_etat_connexion(); ?>
   <h1 id="course-title">Chargement du cours...</h1>
 
   <!-- Onglets -->
