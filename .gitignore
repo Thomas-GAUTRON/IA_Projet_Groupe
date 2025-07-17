@@ -1,5 +1,7 @@
-**test**
-conf.config
+*.config
+*.env
+!config_example.env
 __pycache__
+**test**
 **upload**
 **old**

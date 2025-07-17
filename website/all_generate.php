@@ -1,10 +1,15 @@
 <?php
-include 'begin_php.php';
-include 'header.html';
+include 'begin_php.php';?>
 
-$supabaseUrl = $config['supabase_url'];
-$supabaseKey = $config['supabase_key'];
-$table = $config['table_name'];
+<head>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+
+<?php
+
+$supabaseUrl = $config['SUPABASE_URL'];
+$supabaseKey = $config['SUPABASE_KEY'];
+$table = $config['SUPABASE_TABLE'];
 
 $ch = curl_init();
 
@@ -53,8 +58,7 @@ if (is_array($data)) {
     foreach ($uniqueIds as $id) {
         echo "id_request unique : " . htmlspecialchars($id) . "<br>
             <ul>
-                <li><a href='change?id=$id&type=resume'>- Voir résumé associé</a></li>
-                <li><a href='change?id=$id&type=quizz'>- Voir quiz associé</a></li>
+                <li><a href='change?id=$id&type=quizz'>- Voir</a></li>
             </ul>";
     }
 } else {

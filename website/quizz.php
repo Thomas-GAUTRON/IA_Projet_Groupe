@@ -1,10 +1,9 @@
 <?php
 include 'begin_php.php';
-$supabaseUrl = $config['supabase_url'];
-$supabaseKey = $config['supabase_key']; // généralement la clé anonyme (public)
-$table = $config['table_name'];
-$idRequest = json_decode($_SESSION['response']);
-
+$supabaseUrl = $config['SUPABASE_URL'];
+$supabaseKey = $config['SUPABASE_KEY']; // généralement la clé anonyme (public)
+$table = $config['SUPABASE_TABLE'];
+$idRequest = $_SESSION["reponse"];
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 curl_setopt($ch, CURLOPT_URL, "$supabaseUrl/rest/v1/$table?id_request=eq.$idRequest");
@@ -35,6 +34,7 @@ if (!empty($data) && isset($data[0]['content'])) {
       }
     }
   }
+
 }
 if (preg_match('/```json(.*?)```/s',  $page, $matches)) {
   $contenu = trim($matches[1]); // On enlève les espaces inutiles
