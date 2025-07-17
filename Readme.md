@@ -58,7 +58,7 @@ Le projet combine un backend Python (Flask), une interface web PHP/JS, l’autom
 
 ---
 
-## Structure du projet
+## Structure synthétique du projet
 
 ```
 IA_Projet_Groupe/
@@ -71,43 +71,75 @@ IA_Projet_Groupe/
 │   ├── requirements.txt
 │   ├── result_prep.py
 │   ├── ex.json
-│   ├── program.py
-│   ├── test.py
+│   ├── uploads/
 │   ├── templates/
 │   │   ├── index.html
 │   │   └── result.html
 │   └── quiz_part/
 │       ├── index.html
 │       ├── quiz.js
-│       ├── quiz2.js
 │       ├── quiz.json
 │       └── styles.css
 │
-├── n8n/                  # Workflows d’automatisation
-│   └── General_workflow_1.json
-│
 ├── website/              # Frontend PHP/JS
 │   ├── index.php
-│   ├── result.php
-│   ├── result2.php
-│   ├── resume.php
 │   ├── quizz.php
-│   ├── call_flask.php
 │   ├── all_generate.php
-│   ├── change.php
 │   ├── begin_php.php
-│   ├── header.html
 │   ├── footer.html
-│   ├── config_example.config
-│   ├── conf.config
-│   └── assets/
-│       ├── css/
-│       │   └── styles.css
-│       └── js/
-│           └── script.js
+│   ├── change.php
+│   ├── load.php
+│   ├── test.php
+│   ├── header.html
+│   ├── assets/
+│   │   ├── css/
+│   │   │   └── styles.css
+│   │   └── js/
+│   │       └── script.js
 │
+├── n8n/
+│   └── General_workflow_1.json
+│
+├── config_example.env    # Exemple de configuration (à copier en .env)
 └── Readme.md
 ```
+
+---
+
+## Rôle des principaux fichiers/dossiers
+
+| Élément                        | Rôle/Fonction principale                                      |
+|------------------------------- |--------------------------------------------------------------|
+| basic/app.py                   | Serveur Flask, upload, IA, rendu HTML                        |
+| basic/classes.py               | Gestion des PDF et résultats                                 |
+| basic/gemini_incl.py           | Prompts et appels à l’IA                                     |
+| basic/Prompt.txt               | Exemples de prompts IA                                       |
+| basic/requirements.txt         | Dépendances Python                                           |
+| basic/result_prep.py           | Utilitaires de post-traitement                              |
+| basic/ex.json                  | Exemple de quiz généré (pour test/démo)                     |
+| basic/uploads/                 | Stockage temporaire des PDF uploadés                        |
+| basic/templates/               | Templates HTML pour Flask                                    |
+| basic/quiz_part/               | Interface quiz autonome (HTML/JS/CSS/JSON)                  |
+| website/index.php              | Accueil, upload PDF                                          |
+| website/quizz.php              | Affichage quiz dynamique                                     |
+| website/all_generate.php       | Génération de contenu                                        |
+| website/begin_php.php          | Init session/config                                          |
+| website/footer.html            | Pied de page HTML                                            |
+| website/change.php             | Script de modification                                       |
+| website/load.php               | Script de chargement                                         |
+| website/test.php               | Script de test                                               |
+| website/header.html            | En-tête HTML                                                 |
+| website/assets/css/styles.css  | Styles principaux du site                                    |
+| website/assets/js/script.js    | Script JS principal (correction quiz, interactions)          |
+| n8n/General_workflow_1.json    | Workflow d’automatisation n8n                                |
+| config_example.env             | Exemple de configuration globale (à copier en .env)          |
+| Readme.md                      | Documentation du projet                                      |
+
+---
+
+## Remarque
+- Le fichier de configuration réel doit être créé à partir de `config_example.env` et placé à la racine sous le nom `.env` (non versionné).
+- Les fichiers/dossiers temporaires ou de cache (comme `__pycache__`) ne sont pas listés ici.
 
 ---
 
