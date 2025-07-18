@@ -28,8 +28,8 @@ function initiateOAuthLogin($provider, $supabase_url, $supabase_key, $redirect_t
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['google_login'])) {
         initiateOAuthLogin('google', $supabase_url, $supabase_key);
-    } elseif (isset($_POST['apple_login'])) {
-        initiateOAuthLogin('apple', $supabase_url, $supabase_key);
+    } elseif (isset($_POST['discord_login'])) {
+        initiateOAuthLogin('discord', $supabase_url, $supabase_key);
     }
 }
 
@@ -153,6 +153,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email_login'])) {
             color: #000;
         }
         
+        .discord-btn {
+            color: #5865F2;
+        }
+        
         .divider {
             text-align: center;
             margin: 20px 0;
@@ -249,7 +253,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email_login'])) {
         .register-link a:hover {
             text-decoration: underline;
         }
+        /* Style du bouton Google officiel appliqué au bouton personnalisé Supabase */
+        .google-supabase-btn {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px;
+            margin-bottom: 10px;
+            border: 1px solid #dcdcdc;
+            border-radius: 4px;
+            background: #fff;
+            color: #3c4043;
+            font-size: 16px;
+            font-family: Roboto, Arial, sans-serif;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 2px rgba(60,64,67,.08), 0 1.5px 6px rgba(60,64,67,.08);
+            transition: background 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            outline: none;
+        }
+        .google-supabase-btn:hover {
+            background: #f7f8fa;
+            box-shadow: 0 2px 4px rgba(60,64,67,.13);
+        }
+        .google-supabase-btn:active {
+            background: #eee;
+        }
+        .google-supabase-btn img {
+            margin-right: 12px;
+            background: #fff;
+            border-radius: 2px;
+            height: 20px;
+            width: 20px;
+            box-shadow: none;
+        }
     </style>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <div class="form-container">
@@ -263,17 +304,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email_login'])) {
             <div class="success"><?php echo htmlspecialchars($message); ?></div>
         <?php endif; ?>
         
-        <!-- Boutons OAuth -->
+        <!-- Bouton Google style officiel pour Supabase -->
         <div class="oauth-buttons">
             <form method="POST" style="display: inline;">
-                <button type="submit" name="google_login" class="oauth-btn google-btn">
-                    🔴 Se connecter avec Google
-                </button>
-            </form>
-            
-            <form method="POST" style="display: inline;">
-                <button type="submit" name="apple_login" class="oauth-btn apple-btn">
-                    🍎 Se connecter avec Apple
+                <button type="submit" name="google_login" class="google-supabase-btn">
+                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" style="height:20px; vertical-align:middle; margin-right:8px;">
+                    Se connecter avec Google
                 </button>
             </form>
         </div>
