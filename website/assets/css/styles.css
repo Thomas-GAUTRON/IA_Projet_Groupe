@@ -179,3 +179,48 @@ footer {
     border-top: 1px solid #ddd;
     margin-top: 3rem;
 }
+
+/* ===== HEADER NAVIGATION ===== */
+.header {
+    width: 100%;
+    background: #007bff;
+    padding: 18px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 35px;
+    border-radius: 0 0 12px 12px;
+}
+
+.header a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+    letter-spacing: 0.5px;
+}
+
+.header a:hover,
+.header a:focus {
+    background: #0056b3;
+    color: #e2e2e2;
+    text-decoration: none;
+}
+
+@media (max-width: 600px) {
+    .header {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 0;
+        border-radius: 0 0 8px 8px;
+    }
+    .header a {
+        font-size: 1rem;
+        padding: 8px 12px;
+    }
+}

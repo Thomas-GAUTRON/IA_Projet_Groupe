@@ -3,7 +3,11 @@ include 'begin_php.php';
 $supabaseUrl = $config['SUPABASE_URL'];
 $supabaseKey = $config['SUPABASE_KEY']; // généralement la clé anonyme (public)
 $table = $config['SUPABASE_TABLE'];
-$idRequest = $_SESSION["reponse"];
+if (isset($_SESSION["reponse"])) {
+  $idRequest = $_SESSION["reponse"];
+} else {
+  $idRequest = 0;
+}
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 curl_setopt($ch, CURLOPT_URL, "$supabaseUrl/rest/v1/$table?id_request=eq.$idRequest");
@@ -20,27 +24,26 @@ usort($data, function ($a, $b) {
   return $a['id'] <=> $b['id'];
 });
 
+$page = "";
+$result = "";
 if (!empty($data) && isset($data[0]['content'])) {
-  $page = "";
-  $result = "";
   foreach ($data as $row) {
-    if (isset($row['metadata'])) {
-      $metadata = json_decode($row['metadata'], true);
-      if (isset($metadata['line']) && isset($row['content']) && $metadata['line'] == 2) {
-        $page = $page . $row['content'] . "\n\n"; // Séparé par deux sauts de ligne
-      }
-      if (isset($metadata['line']) && isset($row['content']) && $metadata['line'] == 1) {
-        $result = $result . $row['content'] . "\n\n"; // Séparé par deux sauts de ligne
-      }
+    if ($row['type'] == 'quiz') {
+      $page = $page . $row['content'];
+    } else {
+      $result = $result . $row['content'] ;
     }
   }
-
 }
+
 if (preg_match('/```json(.*?)```/s',  $page, $matches)) {
   $contenu = trim($matches[1]); // On enlève les espaces inutiles
 }
 ?>
-<?php if (!isset($_SESSION['access_token'])) { header('Location: login.php'); exit; } ?>
+<?php if (!isset($_SESSION['access_token'])) {
+  header('Location: login.php');
+  exit;
+} ?>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -49,17 +52,17 @@ if (preg_match('/```json(.*?)```/s',  $page, $matches)) {
   <meta charset="UTF-8" />
   <title>Quiz Dynamique</title>
   <link rel="stylesheet" href="assets/css/styles.css" />
-   <!-- Scripts -->
+  <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
     const quizData = <?php echo $contenu; ?>;
   </script>
   <script src="assets/js/script.js"></script>
-  
+
 </head>
 
 <body>
-<?php afficher_etat_connexion(); ?>
+  <?php include 'header.html'; ?>
   <h1 id="course-title">Chargement du cours...</h1>
 
   <!-- Onglets -->
@@ -80,11 +83,11 @@ if (preg_match('/```json(.*?)```/s',  $page, $matches)) {
     <div class="pane" id="resume-pane">
       <h2>Résumé</h2>
       <p><?php
-      if (preg_match('/---ABSTRACT START---(.*?)---ABSTRACT END---/s',  $result, $matches)) {
-        $contenu2 = trim($matches[1]); // On enlève les espaces inutiles
-        echo $contenu2;
-      }
-       ?></p>
+          if (preg_match('/---ABSTRACT START---(.*?)---ABSTRACT END---/s',  $result, $matches)) {
+            $contenu2 = trim($matches[1]); // On enlève les espaces inutiles
+            echo $contenu2;
+          }
+          ?></p>
     </div>
   </div>
   <script>
@@ -113,7 +116,6 @@ if (preg_match('/```json(.*?)```/s',  $page, $matches)) {
       });
     });
   </script>
- <?php // include "footer.html"; ?>
- 
+
 </body>
 </html>

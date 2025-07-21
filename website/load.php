@@ -1,7 +1,8 @@
 <?php
 include "begin_php.php";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $flask_url = $env["FLASK_URL"];
+    $flask_url = $config["FLASK_URL"];
     // Préparer les données POST
     $postData = [
         'option' => $_POST['option'] ?? '',
@@ -35,41 +36,77 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION["result"] = $response;
     curl_close($ch);
 
-    $url = $config['N8N_URL_BASE'] . $config['N8N_URL_TEST'] . $config['N8N_URL_END'];
-    $ch = curl_init($url);
-    // Configuration de la requête POST
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
-    // Envoie les données comme JSON (contenu brut du tableau encodé)
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json'
-    ]);
 
-    // Corps de la requête : JSON encodé
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-        "payload" => $_SESSION["result"] // ou tu peux renvoyer directement une structure propre ici
-    ]));
+    function random_int64_positive()
+    {
+        $bytes = random_bytes(8);
+        $hex = bin2hex($bytes);
 
-    // Exécution de la requête
-    $response = curl_exec($ch);
+        // Convertir en entier non signé (0 à 2^64 - 1)
+        $unsigned = bchexdec($hex);
 
-    // Gestion des erreurs
-    if (curl_errno($ch)) {
-        echo 'Erreur cURL : ' . curl_error($ch);
-    } else {
-        $data = json_decode($response, true);
-        if (isset($data['code']) && $data['code'] == 404) {
-            echo "Erreur 404 : La ressource demandée n'a pas été trouvée.";
-            exit;
+        $max_positive_int64 = '9223372036854775807'; // 2^63 - 1
+
+        // Si la valeur dépasse la moitié signée positive, on la réduit par modulo pour rester dans la plage positive signée
+        if (bccomp($unsigned, $max_positive_int64) === 1) {
+            $unsigned = bcmod($unsigned, bcadd($max_positive_int64, '1')); // modulo 2^63
+        }
+
+        return $unsigned; // string positive <= 2^63-1
+    }
+
+    function bchexdec(string $hex): string
+    {
+        $dec = '0';
+        $len = strlen($hex);
+        for ($i = 0; $i < $len; $i++) {
+            $dec = bcmul($dec, '16', 0);
+            $dec = bcadd($dec, hexdec($hex[$i]), 0);
+        }
+        return $dec;
+    }
+
+
+    $tableau = json_decode($response, true); // Le second paramètre "true" retourne un tableau associatif
+    $prefix1 = '---ABSTRACT START---';
+    $prefix2 = '```json';
+
+    // Exemple d'utilisation
+    $randomInt64Pos = random_int64_positive();
+    $_SESSION['reponse'] = $randomInt64Pos;
+
+    $id = getUserIdFromAccessToken($_SESSION['access_token'], $config['SUPABASE_URL'], $config['SUPABASE_KEY']);
+
+    foreach ($tableau as $element) {
+        if (substr($element, 0, strlen($prefix1)) === $prefix1) {
+            $sub_text = split_text($element);
+            foreach ($sub_text as $chunk) {
+                $data = [
+                    'content' => $chunk,
+                    'id_request' => $randomInt64Pos,
+                    'id_user' => $id,
+                    'type' => 'resume'
+                ];
+                $rep = insert_in_supabase($config['SUPABASE_URL'], $config['SUPABASE_KEY'], $config['SUPABASE_TABLE'], $data);
+                echo "Abstract : " . $rep['http_code'] . "<br>";
+            }
+        } elseif (substr($element, 0, strlen($prefix2)) === $prefix2) {
+            $sub_text = split_text($element);
+            foreach ($sub_text as $chunk) {
+                $data = [
+                    'content' => $chunk,
+                    'id_request' => $randomInt64Pos,
+                    'id_user' => $id,
+                    'type' => 'quiz'
+                ];
+                $rep = insert_in_supabase($config['SUPABASE_URL'], $config['SUPABASE_KEY'], $config['SUPABASE_TABLE'], $data);
+                echo "Quiz : " . $rep['http_code'] . "<br>";
+            }
         } else {
-            echo "Réponse de n8n : " . $response;
-            $_SESSION["reponse"] = $response;
+            echo "❌ '$element' ne commence pas par '$prefix'<br>";
         }
     }
-    // Fermeture
-    curl_close($ch);
 
     // Afficher la réponse
     header("Location: quizz");

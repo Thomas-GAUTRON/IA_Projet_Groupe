@@ -21,14 +21,14 @@ if (!in_array($type, $allowedTypes)) {
 switch ($type) {
     case 'quizz':
         // Ici, tu peux inclure ou générer le quiz correspondant à $id
-        $_SESSION['response'] = $id;
+        $_SESSION['reponse'] = $id;
         header("Location: quizz");
         // Exemple : include "quiz_generator.php"; ou récupération BD, etc.
         break;
 
     case 'resume':
         // Ici, tu peux inclure ou générer le résumé correspondant à $id
-        $_SESSION['response'] = $id;
+        $_SESSION['reponse'] = $id;
         header("Location: resume");
         // Exemple : include "resume_generator.php";
         break;

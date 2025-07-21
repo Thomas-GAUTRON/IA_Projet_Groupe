@@ -1,4 +1,9 @@
-<?php include 'begin_php.php'; if (!isset($_SESSION['access_token'])) { header('Location: login.php'); exit; } afficher_etat_connexion(); ?>
+<?php include 'begin_php.php';
+if (!isset($_SESSION['access_token'])) {
+    header('Location: login.php');
+    exit;
+}
+    ?>
 
 <!doctype html>
 <html>
@@ -10,6 +15,7 @@
 </head>
 
 <body>
+    <?php include 'header.html'; ?>
     <h1>Upload PDF Files</h1>
     <form action="load.php" method="post" enctype="multipart/form-data">
         <label for="file">Enter your files</label>
