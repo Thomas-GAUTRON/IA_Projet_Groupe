@@ -1,9 +1,6 @@
-os
-dotenv
-json
-fpdf
 Flask
 PyPDF2
-markdown
-langchain_google_genai
+fpdf
+langchain-google-genai
 pdfkit
+markdown
