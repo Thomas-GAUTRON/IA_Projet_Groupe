@@ -2,26 +2,48 @@
     "courseTitle": "Name of the Source",
     "quiz": [
         {
-            "question": "What is refraction ?",
+            "question": "What is refraction?",
             "choices": [
                 "Changing in light direction",
-                "Light Absorbtion",
+                "Light absorption",
                 "Spreading of light",
-                "Reflexion of light"
+                "Reflection of light"
             ],
             "answer": "Changing in light direction",
-            "explanation": "The refraction is the changing of direction of a signal when passing through one space to another."
+            "explanation": "Refraction is the changing of direction of a signal when passing through one medium to another."
         },
         {
-            "question": "What is the speed of light ?",
+            "question": "What is the speed of light in a vacuum?",
             "choices": [
-                "300 000 km/s",
-                "150 000 km/s",
-                "100 000 km/s",
-                "1 000 000 km/s"
+                "$3 \\times 10^5 \\, \\text{km/s}$",
+                "$1.5 \\times 10^5 \\, \\text{km/s}$",
+                "$1 \\times 10^5 \\, \\text{km/s}$",
+                "$1 \\times 10^6 \\, \\text{km/s}$"
             ],
-            "answer": "300 000 km/s",
-            "explanation": "In the void, light is travelling at aproximatly 300 000 kilometers per second."
+            "answer": "$3 \\times 10^5 \\, \\text{km/s}$",
+            "explanation": "In a vacuum, light travels at approximately $3 \\times 10^5 \\, \\text{kilometers per second}$."
+        },
+        {
+            "question": "What is the formula for the area of a circle?",
+            "choices": [
+                "$A = \\pi r$",
+                "$A = \\pi r^2$",
+                "$A = 2\\pi r$",
+                "$A = 2\\pi r^2$"
+            ],
+            "answer": "$A = \\pi r^2$",
+            "explanation": "The area $A$ of a circle is given by the formula $A = \\pi r^2$, where $r$ is the radius of the circle."
+        },
+        {
+            "question": "What is the solution to the equation $ax^2 + bx + c = 0$?",
+            "choices": [
+                "$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$",
+                "$x = \\frac{b \\pm \\sqrt{b^2 - 4ac}}{2a}$",
+                "$x = \\frac{-b \\pm \\sqrt{b^2 + 4ac}}{2a}$",
+                "$x = \\frac{-b \\pm \\sqrt{b^2}}{2a}$"
+            ],
+            "answer": "$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$",
+            "explanation": "The solutions to the quadratic equation $ax^2 + bx + c = 0$ are given by the quadratic formula $x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$."
         }
     ]
 }

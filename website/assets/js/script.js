@@ -1,49 +1,12 @@
-function corriger() {
-  let score = 0;
-  const questions = document.querySelectorAll('.question-block');
-
-  questions.forEach(block => {
-    const correct = block.dataset.correct;
-    const name = block.dataset.question;
-    const reponseChoisie = document.querySelector(`input[name="${name}"]:checked`);
-
-    const reponseBonDiv = block.querySelector('.reponse_bon');
-    const reponseMauvaisDiv = block.querySelector('.reponse_mauvais');
-    const explicationDiv = block.querySelector('.explication');
-
-    // Réinitialisation
-    block.style.border = "none";
-    reponseBonDiv.style.display = "none";
-    reponseMauvaisDiv.style.display = "none";
-    explicationDiv.style.display = "none";
-
-    if (reponseChoisie) {
-      if (reponseChoisie.value === correct) {
-        score++;
-        block.style.border = "2px solid green";
-        reponseBonDiv.style.display = "block";
-      } else {
-        block.style.border = "2px solid red";
-        reponseMauvaisDiv.style.display = "block";
-      }
-      explicationDiv.style.display = "block";
-    } else {
-      block.style.border = "2px dashed orange";
-    }
-  });
-
-  document.getElementById("score").innerHTML = `<h3>Score : ${score} / ${questions.length}</h3>`;
-}
-
 async function loadQuiz() {
   try {
- 
-    const data = quizData;
 
+    const data = quizData;
+    console.log(data);
     document.getElementById('course-title').textContent = data.courseTitle;
 
     let currentIndex = 0;
-	let score = 0; // score total
+    let score = 0; // score total
     const container = document.getElementById('quiz-container');
 
     function showQuestion(index) {
@@ -68,9 +31,9 @@ async function loadQuiz() {
 
           if (choice === item.answer) {
             btn.classList.add('correct');
-			score++; // 🎯 bonne réponse = +1
+            score++; // 🎯 bonne réponse = +1
           } else {
-            btn.classList.add('incorrect');
+            btn.classList.add('incorrect'); // Ajout : couleur rouge sur la mauvaise réponse
             const correct = [...all].find(c => c.textContent === item.answer);
             if (correct) correct.classList.add('correct');
           }
@@ -81,6 +44,7 @@ async function loadQuiz() {
           block.appendChild(exp);
 
           btnNext.disabled = false;
+          if (window.MathJax) MathJax.typesetPromise([block]);
         });
 
         block.appendChild(btn);
@@ -97,25 +61,27 @@ async function loadQuiz() {
           currentIndex++;
           showQuestion(currentIndex);
         } else {
-			
           container.innerHTML = `<h2>Quiz terminé !</h2>`;
-		  showScore();
+          showScore();
         }
+        if (window.MathJax) MathJax.typesetPromise([container]);
       });
       container.appendChild(btnNext);
+      if (window.MathJax) MathJax.typesetPromise([container]);
     }
-	
-	function showScore() {
+
+    function showScore() {
       container.innerHTML = `
         <h2>Quiz terminé !</h2>
         <p>Votre score : <strong>${score} / ${data.quiz.length}</strong></p>
       `;
-	}
-	
-	
+      if (window.MathJax) MathJax.typesetPromise([container]);
+    }
+
+
     showQuestion(currentIndex);
 
-   
+
     const btnDownload = document.getElementById('download-pdf');
     btnDownload.addEventListener('click', () => generatePdf(data));
 
@@ -124,7 +90,6 @@ async function loadQuiz() {
     console.error("Erreur : ", error);
   }
 }
-
 
 function generatePdf(quizData) {
   const { jsPDF } = window.jspdf;
@@ -177,5 +142,85 @@ function generatePdf(quizData) {
   doc.save('quiz.pdf');
 }
 
+function compileLaTeX() {
+  const latexCode = document.getElementById('latex-input').value;
+  const outputDiv = document.getElementById('output');
 
-window.onload = loadQuiz;
+  try {
+    // Parser basique du LaTeX
+    let htmlContent = latexCode;
+
+    // Nettoyer le début et la fin
+    htmlContent = htmlContent.replace(/\\begin{document}/, '');
+    htmlContent = htmlContent.replace(/\\end{document}/, '');
+
+    // Convertir les sections
+    htmlContent = htmlContent.replace(/\\section\*{([^}]+)}/g, '<h2 class="latex-section">$1</h2>');
+    htmlContent = htmlContent.replace(/\\subsection\*{([^}]+)}/g, '<h3 class="latex-subsection">$1</h2>');
+
+    // Convertir les listes
+    htmlContent = htmlContent.replace(/\\begin{itemize}/g, '<ul class="latex-itemize">');
+    htmlContent = htmlContent.replace(/\\end{itemize}/g, '</ul>');
+    htmlContent = htmlContent.replace(/\\item\s+/g, '<li class="latex-item">');
+
+    // Convertir le texte gras
+    htmlContent = htmlContent.replace(/\\textbf{([^}]+)}/g, '<span class="latex-textbf">$1</span>');
+
+    // Nettoyer les paragraphes vides et ajouter des balises
+    htmlContent = htmlContent.replace(/\n\s*\n/g, '</p><p class="latex-paragraph">');
+    htmlContent = '<p class="latex-paragraph">' + htmlContent + '</p>';
+
+    // Nettoyer les balises vides
+    htmlContent = htmlContent.replace(/<p class="latex-paragraph">\s*<\/p>/g, '');
+    htmlContent = htmlContent.replace(/<p class="latex-paragraph">\s*<div/g, '<div');
+    htmlContent = htmlContent.replace(/<\/div>\s*<\/p>/g, '</div>');
+    htmlContent = htmlContent.replace(/<p class="latex-paragraph">\s*<ul/g, '<ul');
+    htmlContent = htmlContent.replace(/<\/ul>\s*<\/p>/g, '</ul>');
+
+    // Fermer les éléments de liste
+    htmlContent = htmlContent.replace(/<li class="latex-item">([^<]*?)(?=<li|<\/ul>)/g, '<li class="latex-item">$1</li>');
+    htmlContent = htmlContent.replace(/<li class="latex-item">([^<]*?)<\/ul>/g, '<li class="latex-item">$1</li></ul>');
+
+    // Afficher le résultat
+    outputDiv.innerHTML = '<div class="latex-document">' + htmlContent + '</div>';
+
+    // Afficher un message de succès
+    const successMsg = document.createElement('div');
+    successMsg.className = 'success';
+    // successMsg.innerHTML = '<strong>✓ Conversion réussie !</strong> Le LaTeX a été converti en HTML. Les formules mathématiques sont rendues par MathJax.';
+    outputDiv.insertBefore(successMsg, outputDiv.firstChild);
+
+    // Re-traiter les mathématiques avec MathJax
+    if (window.MathJax) {
+      MathJax.typesetPromise([outputDiv]).catch(function (err) {
+        console.log('Erreur MathJax: ' + err.message);
+      });
+    }
+
+  } catch (error) {
+    outputDiv.innerHTML = `<div class="error">
+                    <strong>Erreur de conversion:</strong><br>
+                    ${error.message}
+                    <br><br>
+                    <em>Cette conversion basique supporte les commandes LaTeX de base. 
+                    Pour une conversion plus complète, utilisez Pandoc en ligne de commande.</em>
+                </div>`;
+    console.error('Erreur de conversion:', error);
+  }
+}
+
+// Conversion automatique au chargement
+window.onload = function () {
+  // Vérifier que MathJax est chargé
+  function checkMathJax() {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+      console.log('MathJax loaded successfully');
+      compileLaTeX();
+    } else {
+      console.log('Waiting for MathJax to load...');
+      setTimeout(checkMathJax, 500);
+    }
+  }
+  checkMathJax();
+  loadQuiz();
+};

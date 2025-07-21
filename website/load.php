@@ -6,7 +6,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Préparer les données POST
     $postData = [
         'option' => $_POST['option'] ?? '',
-        'mod' => $_POST['mod'] ?? '',
+        'modifier' => $_POST['modifier'] ?? '',
+        'mode' => $_POST['mode'] ?? '',
     ];
 
     // Gérer les fichiers uploadés
@@ -20,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+
+
 
     $ch = curl_init($flask_url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -111,4 +114,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Afficher la réponse
     header("Location: quizz");
     exit;
-}
+} 
+
+?>

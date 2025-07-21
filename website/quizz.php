@@ -29,15 +29,19 @@ $result = "";
 if (!empty($data) && isset($data[0]['content'])) {
   foreach ($data as $row) {
     if ($row['type'] == 'quiz') {
-      $page = $page . $row['content'];
+      $page = $page . $row['content'] . " ";
     } else {
-      $result = $result . $row['content'] ;
+      $result = $result . $row['content'] . " ";
     }
   }
 }
 
 if (preg_match('/```json(.*?)```/s',  $page, $matches)) {
   $contenu = trim($matches[1]); // On enlève les espaces inutiles
+}
+$contenu2 = "";
+if (preg_match('/begin{document}(.*?)\\\end{document}/s',  $result, $matches)) {
+  $contenu2 = trim($matches[1]); // On enlève les espaces inutiles
 }
 ?>
 <?php if (!isset($_SESSION['access_token'])) {
@@ -53,16 +57,45 @@ if (preg_match('/```json(.*?)```/s',  $page, $matches)) {
   <title>Quiz Dynamique</title>
   <link rel="stylesheet" href="assets/css/styles.css" />
   <!-- Scripts -->
+  <!-- MathJax Configuration -->
+  <!-- MathJax Configuration -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [
+          ['\\(', '\\)'],
+          ['$', '$']
+        ],
+        displayMath: [
+          ['\\[', '\\]'],
+          ['$$', '$$']
+        ],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: {
+          '[+]': ['ams', 'newcommand', 'configmacros']
+        }
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
     const quizData = <?php echo $contenu; ?>;
   </script>
   <script src="assets/js/script.js"></script>
-
 </head>
 
 <body>
-  <?php include 'header.html'; ?>
+  <?php include 'header.html'; 
+  ?>
+  <textarea id="latex-input" style="display: none;">
+    <?php echo $contenu2; ?>
+  </textarea>
+
   <h1 id="course-title">Chargement du cours...</h1>
 
   <!-- Onglets -->
@@ -82,12 +115,7 @@ if (preg_match('/```json(.*?)```/s',  $page, $matches)) {
 
     <div class="pane" id="resume-pane">
       <h2>Résumé</h2>
-      <p><?php
-          if (preg_match('/---ABSTRACT START---(.*?)---ABSTRACT END---/s',  $result, $matches)) {
-            $contenu2 = trim($matches[1]); // On enlève les espaces inutiles
-            echo $contenu2;
-          }
-          ?></p>
+      <p id="output"></p>
     </div>
   </div>
   <script>
@@ -118,4 +146,5 @@ if (preg_match('/```json(.*?)```/s',  $page, $matches)) {
   </script>
 
 </body>
+
 </html>
