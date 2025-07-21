@@ -91,6 +91,7 @@ if (preg_match('/begin{document}(.*?)\\\end{document}/s',  $result, $matches)) {
 
 <body>
   <?php include 'header.html'; 
+  echo "<textarea> $contenu </textarea>";
   ?>
   <textarea id="latex-input" style="display: none;">
     <?php echo $contenu2; ?>

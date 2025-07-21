@@ -83,7 +83,7 @@ async function loadQuiz() {
 
 
     const btnDownload = document.getElementById('download-pdf');
-    btnDownload.addEventListener('click', () => generatePdf(data));
+    btnDownload.addEventListener('click', () => downloadQuizPdfFromPython(data));
 
   } catch (error) {
     document.getElementById('course-title').textContent = "Erreur lors du chargement du quiz.";
@@ -207,6 +207,28 @@ function compileLaTeX() {
                 </div>`;
     console.error('Erreur de conversion:', error);
   }
+}
+
+function downloadQuizPdfFromPython(quizData) {
+  fetch('http://127.0.0.1:5000/json_quiz_to_pdf', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ quiz_json: quizData })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.pdf_path) {
+        var link = document.createElement('a');
+        link.href = data.pdf_path;
+        //   link.download = 'quiz.pdf'; // Nom du fichier pour le téléchargement
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        alert('Erreur lors de la génération du PDF : ' + data.error);
+      }
+    })
+    .catch(err => alert('Erreur réseau : ' + err));
 }
 
 // Conversion automatique au chargement
