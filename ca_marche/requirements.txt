@@ -1,0 +1,9 @@
+os
+dotenv
+json
+fpdf
+Flask
+PyPDF2
+markdown
+langchain_google_genai
+pdfkit
