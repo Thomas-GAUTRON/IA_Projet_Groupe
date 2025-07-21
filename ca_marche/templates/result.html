@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+    <title>Treatment Results</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Preview</h1>
+        {% if results|length > 1 %}
+            <div class="tabs" id="tabs">
+                {% for item in results %}
+                    <div class="tab{% if loop.first %} active{% endif %}" data-tab="tab{{ loop.index0 }}">{{ item.filename }}</div>
+                {% endfor %}
+            </div>
+            {% for item in results %}
+                <div class="tab-content{% if loop.first %} active{% endif %}" id="tab{{ loop.index0 }}">
+                    <div class="result-item">
+                        <div class="filename">{{ item.filename }}</div>
+                        <div class="content-section">
+                            <div class="pdf-section" style="width:100%">
+                                <h3>PDF Preview:</h3>
+                                {% if item.pdf_path %}
+                                    <iframe 
+                                        src="{{ item.pdf_path }}" 
+                                        class="pdf-preview"
+                                        title="PDF Preview">
+                                    </iframe>
+                                    <a href="{{ item.pdf_path }}" class="pdf-link" target="_blank">
+                                        Open PDF in New Tab
+                                    </a>
+                                {% else %}
+                                    <div class="no-pdf">
+                                        No PDF available for this item
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <script>
+                const tabs = document.querySelectorAll('.tab');
+                const tabContents = document.querySelectorAll('.tab-content');
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        tabs.forEach(t => t.classList.remove('active'));
+                        tabContents.forEach(tc => tc.classList.remove('active'));
+                        tab.classList.add('active');
+                        document.getElementById(tab.getAttribute('data-tab')).classList.add('active');
+                    });
+                });
+            </script>
+        {% else %}
+            {% for item in results %}
+                <div class="result-item">
+                    <div class="filename">{{ item.filename }}</div>
+                    <div class="content-section">
+                        <div class="pdf-section" style="width:100%">
+                            <h3>PDF Preview:</h3>
+                            {% if item.pdf_path %}
+                                <iframe 
+                                    src="{{ item.pdf_path }}" 
+                                    class="pdf-preview"
+                                    title="PDF Preview">
+                                </iframe>
+                                <a href="{{ item.pdf_path }}" class="pdf-link" target="_blank">
+                                    Open PDF in New Tab
+                                </a>
+                            {% else %}
+                                <div class="no-pdf">
+                                    No PDF available for this item
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="back-link">
+            <a href="/">← Back to Form</a>
+        </div>
+    </div>
+</body>
+</html>
