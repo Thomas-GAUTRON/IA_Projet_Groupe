@@ -1,10 +1,14 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, after_this_request, send_from_directory
+from flask_cors import CORS
 from classes import Source, Result
 import os
 import gemini_incl as gem
 import result_prep as prep
+import re
+import unicodedata
 
 app = Flask(__name__)
+CORS(app)
 current_directory = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOAD_FOLDER'] = f'{current_directory}/uploads'
 
@@ -23,17 +27,16 @@ def work_pdf(ai,out_ai,source_tab,files,mod,edu):
         })
     return results_with_pdfs
 
-# Add route to serve PDF files from download directory
-@app.route('/download/<path:filename>')
-def download_file(filename):
-    from flask import send_from_directory
-    return send_from_directory('download', filename)
 
 # Add route to serve CSS file from templates directory
 @app.route('/style.css')
 def serve_css():
-    from flask import send_from_directory
     return send_from_directory('templates', 'style.css')
+
+def remove_accents(input_str):
+    # Transforme les caractères accentués en non accentués
+    nfkd_form = unicodedata.normalize('NFKD', input_str)
+    return ''.join([c for c in nfkd_form if not unicodedata.combining(c)])
 
 def create_last_dict(files,tab):
     last_dict={}
@@ -86,21 +89,64 @@ def handle_option_4(ai, source_tab, mod, edu, files):
         })
     return out_ai, cleaned_ai, results_with_pdfs
 
-@app.route('/generate_quiz_pdf', methods=['POST'])
-def generate_quiz_pdf():
+
+@app.route('/json_quiz_to_pdf', methods=['POST'])
+def json_quiz_to_pdf():
     data = request.get_json()
-    latex = data.get('latex')
-    filename = data.get('filename', 'quiz.pdf')
-    if not latex:
-        return jsonify({'error': 'Aucun contenu LaTeX fourni.'}), 400
-    # On s'assure que le nom de fichier finit par .pdf
-    if not filename.endswith('.pdf'):
-        filename += '.pdf'
+    quiz_json = data.get('quiz_json')
+    filename = data.get('filename', None)
+    title = data.get('title', None)
+
+    if not quiz_json:
+        return jsonify({'error': 'Aucun quiz JSON fourni.'}), 400
+
     try:
+        # Vérification de la structure
+        if isinstance(quiz_json, str):
+            quiz_json_obj = json.loads(quiz_json)
+        else:
+            quiz_json_obj = quiz_json
+
+        if 'quiz' not in quiz_json_obj:
+            return jsonify({'error': 'Le JSON ne contient pas de clé "quiz".'}), 400
+
+        
+        # Chemins absolu
+        download_directory = os.path.join(current_directory, 'download')
+
+       # Créer le répertoire de téléchargement s'il n'existe pas
+        if not os.path.exists(download_directory):
+            os.makedirs(download_directory)
+
+        # Utiliser le titre comme nom de fichier si non fourni
+        if not filename:
+            raw_title = quiz_json_obj.get('courseTitle', 'quiz')
+            # Enlève les accents
+            raw_title = remove_accents(raw_title)
+            # Nettoyer le titre pour en faire un nom de fichier valide
+            filename = re.sub(r'[^a-zA-Z0-9_-]', '_', raw_title)
+            filename = re.sub(r'_+', '_', filename)  # Remplacer plusieurs _ par un seul
+            filename += '.pdf'
+
+        if not filename.endswith('.pdf'):
+            filename += '.pdf'
+
+        print("Payload reçu :", quiz_json)
+        latex = prep.json_quiz_to_latex(quiz_json, title=title)
         prep.to_pdf(latex, filename)
-        return jsonify({'pdf_path': f'/download/{filename}'})
+
+
+
+        # Renvoyer l'URL accessible du fichier PDF
+        pdf_url = f'http://127.0.0.1:5000/download/{filename}'
+        return jsonify({'pdf_path': pdf_url})
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/download/<path:filename>')
+def download_file(filename):
+    return send_from_directory('download', filename, as_attachment=True)
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
