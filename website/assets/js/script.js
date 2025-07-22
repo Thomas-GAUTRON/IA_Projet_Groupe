@@ -302,8 +302,15 @@ if (typeof window.initialQuizArray !== 'undefined' && Array.isArray(window.initi
   // Cas où il n’y a que des résumés et aucun quiz : créer des objets placeholder
   if (courseQuizzes.length === 0 && courseResumes.length > 0) {
     window.courseQuizzes = courseResumes.map((_, idx) => ({
-      courseTitle: courseResumes[idx].match(/section\*\{([^}]+)\}/)[1].replace(/\\[a-zA-Z]+/g, '') ?? `Résumé ${idx + 1}`, quiz: []
-
+      courseTitle: (() => {
+        try {
+          const match = courseResumes[idx].match(/section\*\{([^}]+)\}/);
+          return match ? match[1].replace(/\\[a-zA-Z]+/g, '') : `Résumé ${idx + 1}`;
+        } catch (error) {
+          return `Résumé ${idx + 1}`;
+        }
+      })(),
+      quiz: []
     }));
   }
   document.addEventListener('DOMContentLoaded', () => {
@@ -356,8 +363,10 @@ function generatePdfFromLatex() {
   fetch('http://127.0.0.1:5000/latex_to_pdf', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ latex: latexCode,
-    title: quizData?.courseTitle || "Résumé" })
+    body: JSON.stringify({
+      latex: latexCode,
+      title: quizData?.courseTitle || "Résumé"
+    })
   })
     .then(res => res.json())
     .then(data => {
@@ -378,12 +387,12 @@ function downloadResumePdf() {
   fetch('http://127.0.0.1:5000/latex_to_pdf', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
+    body: JSON.stringify({
       latex: resumeElement,
       title: document.getElementById('course-title').textContent,
       filename: document.getElementById('course-title').textContent + '.pdf'
-       })
- 
+    })
+
   })
     .then(res => res.json())
     .then(data => {

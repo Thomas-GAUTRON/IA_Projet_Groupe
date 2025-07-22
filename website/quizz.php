@@ -108,10 +108,10 @@ if (!$task_id) {
     // Passer l'URL du serveur Flask et le task_id au JavaScript
     const FLASK_URL = "<?php echo rtrim($config['FLASK_URL'], '/'); ?>";
     const TASK_ID = "<?php echo $task_id ?? ''; ?>";
-    // Enregistrer le task_id pour un suivi global dans le header
+    // Stockage global désormais géré par header.php
     if (TASK_ID) {
-      localStorage.setItem('current_task_id', TASK_ID);
-    }
+       localStorage.setItem('current_task_id', TASK_ID);
+     }
 
     // Données initiales (cas dashboard)
     const HAS_INITIAL_DATA = <?php echo isset($quizDataArr) && count($quizDataArr) ? 'true' : 'false'; ?>;
@@ -184,9 +184,9 @@ if (!$task_id) {
                             clearInterval(interval);
                             // Suppression du task_id stocké globalement
                             localStorage.removeItem('current_task_id');
-                            loader.style.display = 'none';
-                            container.style.display = 'flex';
-                            processResults(data.result);
+                            // Recharge la page pour afficher automatiquement les résultats
+                            window.location.reload();
+                            return;
                         } else if (data.status === 'failed') {
                             clearInterval(interval);
                             localStorage.removeItem('current_task_id');
