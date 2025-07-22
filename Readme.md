@@ -36,7 +36,7 @@ Le projet s’appuie principalement sur **Google Gemini 2.5 Flash** via LangChai
 
 ```mermaid
 graph LR
-    A[Frontend<br/>PHP/JS (website/)] -->|Upload PDF / Progress| B[Flask API<br/>app_py/]
+    A["Frontend<br/>PHP/JS (website)"]-->|Upload PDF / Progress| B[Flask API<br/>app.py/]
     B -->|JSON quiz / LaTeX résumé| A
     A -->|CRUD résultats| C[(Supabase)]
     C -->|Historique| A
