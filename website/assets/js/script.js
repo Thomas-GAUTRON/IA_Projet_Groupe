@@ -1,7 +1,24 @@
-async function loadQuiz() {
+async function buildQuiz() {
   try {
 
-    const data = quizData;
+    let data = (typeof quizData !== 'undefined') ? quizData : null;
+    if (!data) {
+      const qtxt = document.getElementById('quiz-input');
+      if (qtxt && qtxt.value.trim()) {
+        try {
+          data = JSON.parse(qtxt.value.trim());
+          window.quizData = data; // définir la variable globale pour les prochains appels
+        } catch (e) {
+          console.error('JSON parse error depuis #quiz-input', e);
+        }
+      }
+    }
+
+    if (!data || !data.quiz) {
+      console.error('Aucun quiz valide trouvé.');
+      return;
+    }
+
     console.log(data);
     document.getElementById('course-title').textContent = data.courseTitle;
 
@@ -237,22 +254,97 @@ window.onload = function () {
   function checkMathJax() {
     if (window.MathJax && window.MathJax.typesetPromise) {
       console.log('MathJax loaded successfully');
-      compileLaTeX();
     } else {
       console.log('Waiting for MathJax to load...');
       setTimeout(checkMathJax, 500);
     }
   }
   checkMathJax();
-  loadQuiz();
-
-  // Générer automatiquement l’aperçu PDF du résumé
-  generateResumePreview();
-
 };
 
+// ----- Multi-cours -----
+
+window.courseQuizzes = [];
+window.courseResumes = [];
+
+// Si des données initiales sont injectées depuis PHP (cas dashboard)
+if (typeof window.initialQuizArray !== 'undefined' && Array.isArray(window.initialQuizArray)) {
+  window.courseQuizzes = window.initialQuizArray.map(q => {
+    if (typeof q === 'string') {
+      // Nettoyer la chaîne JSON : extraire la partie entre la première { et la dernière }
+      let cleaned = q;
+      const firstBrace = cleaned.indexOf('{');
+      const lastBrace = cleaned.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1) {
+        cleaned = cleaned.substring(firstBrace, lastBrace + 1);
+      }
+      // Dupliquer tout backslash qui n'est pas déjà une séquence d'échappement JSON valide (ex: \d -> \\d)
+      cleaned = cleaned.replace(/\\(?!["\\\/bfnrtu0-9])/g, "\\\\$&");
+      // Échapper les retours à la ligne en \n
+      cleaned = cleaned.replace(/\r?\n/g, "\\n");
+      cleaned = cleaned.replace(/\\\\/g, "\\");
+      try {
+        const obj = JSON.parse(cleaned);
+        if (obj && obj.quiz) return obj;
+        console.warn('Objet quiz invalide', obj);
+        return null;
+      } catch(e) {
+        console.error('JSON parse error', e);
+        return null;
+      }
+    }
+    return q;
+  });
+  // Filtrer les null
+  window.courseQuizzes = window.courseQuizzes.filter(q => q && q.quiz && Array.isArray(q.quiz));
+  window.courseResumes = Array.isArray(window.initialResumeArray) ? window.initialResumeArray.map(r => r) : [];
+  // Assurer la même longueur
+  if (courseResumes.length < courseQuizzes.length) {
+    while (courseResumes.length < courseQuizzes.length) courseResumes.push('');
+  } else if (courseResumes.length > courseQuizzes.length) {
+    courseResumes = courseResumes.slice(0, courseQuizzes.length);
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    populateCourseSelector();
+    loadCourse(0);
+  });
+}
+
+
+function populateCourseSelector() {
+  const sel = document.getElementById('course-select');
+  if (!sel) return;
+  sel.innerHTML = '';
+  courseQuizzes.forEach((_, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = `Cours ${idx + 1}`;
+    sel.appendChild(opt);
+  });
+  if (courseQuizzes.length > 1) {
+    sel.style.display = 'block';
+  }
+  sel.addEventListener('change', () => loadCourse(parseInt(sel.value)));
+}
+
+function loadCourse(index) {
+  if (index < 0 || index >= courseQuizzes.length) return;
+  window.quizData = courseQuizzes[index];
+  if (!window.quizData || !window.quizData.quiz) {
+    alert('Impossible de charger ce quiz : données invalides.');
+    return;
+  }
+  document.getElementById('latex-input').value = courseResumes[index] || '';
+
+  // Reconstruire l'interface
+  if (typeof buildQuiz === 'function') buildQuiz();
+  if (typeof generatePdfFromLatex === 'function') generatePdfFromLatex();
+  if (typeof compileLaTeX === 'function') compileLaTeX();
+  document.getElementById('course-title').textContent = quizData.courseTitle || `Cours ${index + 1}`;
+}
+
 // Génère et affiche le PDF du résumé dans l’iframe
-function generateResumePreview() {
+function generatePdfFromLatex() {
   const latexCode = document.getElementById('latex-input').value;
   if (!latexCode.trim()) return;
 

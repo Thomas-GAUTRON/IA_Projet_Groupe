@@ -149,6 +149,7 @@ class AI:
         "inferential reasoning, understanding of key concepts, identification of main ideas, vocabulary)." \
         "5. Tone : Maintain a clear, concise, and objective tone."  \
         "6. For Maths and Special Characters : Use LaTeX to write math and special characters (e.g : \\omega, \\sqrt{2}, \\emptyset, etc.)"
+        "Mathematic exprestion must be betwwen '$' characters (e.g : $x^2 + y^2 = z^2$)"
 
         output_format="**Output Format:** The output must be a format must be saved directly as a json file, encapsulated by ---QUIZ_START--- and ---QUIZ_END---. " \
             "The format of your json response must be like the following :"

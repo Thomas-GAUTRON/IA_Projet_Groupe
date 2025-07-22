@@ -40,7 +40,9 @@ class Source:
         for file in files:
             filename = file.filename  # Keep the original filename
             filepath = os.path.join(self.upload_folder, filename)
-            file.save(filepath)
+            # Si le fichier existe déjà et a une taille > 0, ne pas l'écraser
+            if not (os.path.exists(filepath) and os.path.getsize(filepath) > 0):
+                file.save(filepath)
             self.f_sources[filename] = FSource(filename, filepath)
 
     def to_dict(self):

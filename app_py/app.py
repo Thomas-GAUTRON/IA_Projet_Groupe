@@ -8,6 +8,7 @@ import re
 import unicodedata
 import uuid
 import threading
+from typing import Optional
 
 '''
 Main File for the complete application
@@ -19,11 +20,28 @@ app.config['UPLOAD_FOLDER'] = f'{current_directory}/uploads'
 
 tasks = {}  # Pour stocker l'état et les résultats des tâches
 
+# Fonction utilitaire pour mettre à jour la progression
+def set_task_progress(task_id: str, message: str, percent: int):
+    task: Optional[dict] = tasks.get(task_id)
+    if task is not None and task['status'] == 'processing':
+        task['progress'] = message
+        task['percent'] = percent
+
+def append_task_preview(task_id: str, snippet: str):
+    task = tasks.get(task_id)
+    if task is not None:
+        prev = task.get('preview', '')
+        # Limiter la taille du preview pour éviter les réponses trop grosses
+        combined = (prev + '\n' + snippet).strip()
+        # Garder seulement les derniers 2000 caractères pour l'aperçu
+        task['preview'] = combined[-2000:]
+
 def process_files_task(task_id, files_data, selected_option, mod, edu):
     """
     Cette fonction s'exécute en arrière-plan pour traiter les fichiers.
     """
     try:
+        update = lambda msg, pct: set_task_progress(task_id, msg, pct)
         # Recréer les objets 'FileStorage' à partir des données
         from werkzeug.datastructures import FileStorage
         files = []
@@ -35,6 +53,7 @@ def process_files_task(task_id, files_data, selected_option, mod, edu):
             )
             files.append(file_storage)
 
+        update('Lecture des fichiers PDF', 10)
         # Le reste du code de traitement est identique à l'original
         source = Source(files, selected_option, mod, upload_folder=app.config['UPLOAD_FOLDER'])
         mid_res = Result(source)
@@ -53,33 +72,45 @@ def process_files_task(task_id, files_data, selected_option, mod, edu):
         for i in range(1,len(source_tab)):
             source_tab[i]="---SOURCE_START---"+source_tab[i]+"---SOURCE_END---"
         
+        update('Préparation des données', 20)
         match selected_option:
             case "2":
+                update('Génération du quiz', 60)
                 out_ai.append(ai.invoke_quiz(source_tab,gem.translate(mod)))
                 cleaned_ai,temp = prep.clean_json(out_ai[0])
+                append_task_preview(task_id, out_ai[0])
             case "3":
-                out_ai.append(ai.invoke_abs(source_tab,gem.translate(mod)))
-                temp,len_cleaned_ai = prep.clean_split_str(out_ai[0])
-                for i in range(0,len_cleaned_ai):
-                    cleaned_ai.append(temp[i])
+                update('Génération du résumé', 40)
+                abs_text = ai.invoke_abs(source_tab,gem.translate(mod))
+                out_ai.append(abs_text)
+                append_task_preview(task_id, abs_text[:800])
+                update('Nettoyage du résumé', 55)
                 out_ai.append(ai.invoke_quiz(source_tab,gem.translate(mod)))
+                update('Génération du quiz', 80)
                 temp,len_cleaned_ai = prep.clean_json(out_ai[1])
                 for i in range(0,len_cleaned_ai):
                     cleaned_ai.append(temp[i])
             case "4":
-                out_ai.append(ai.invoke_abs(source_tab,gem.translate(mod)))
-                temp,len_cleaned_ai = prep.clean_split_str(out_ai[0])
-                for i in range(0,len_cleaned_ai):
-                    cleaned_ai.append(temp[i])
+                update('Génération du résumé', 40)
+                abs_text = ai.invoke_abs(source_tab,gem.translate(mod))
+                out_ai.append(abs_text)
+                append_task_preview(task_id, abs_text[:800])
+                update('Nettoyage du résumé', 55)
                 out_ai.append(ai.invoke_quiz(cleaned_ai,gem.translate(mod)))
+                update('Génération du quiz', 80)
                 temp, len_cleaned_ai = prep.clean_json(out_ai[1])
                 for i in range(0,len_cleaned_ai):
                     cleaned_ai.append(temp[i])
             case _:
-                out_ai.append(ai.invoke_abs(source_tab,gem.translate(mod),gem.translate(edu)))
-                cleaned_ai, temp = prep.clean_split_str(out_ai[0])
+                update('Génération du résumé', 60)
+                abs_text = ai.invoke_abs(source_tab,gem.translate(mod),gem.translate(edu))
+                out_ai.append(abs_text)
+                append_task_preview(task_id, abs_text[:800])
 
+        set_task_progress(task_id, 'Finalisation', 95)
         tasks[task_id]['status'] = 'completed'
+        tasks[task_id]['percent'] = 100
+        tasks[task_id]['progress'] = 'Terminé'
         tasks[task_id]['result'] = out_ai
     except Exception as e:
         tasks[task_id]['status'] = 'failed'
@@ -122,6 +153,10 @@ def upload_file():
         if not files or (len(files) == 1 and files[0].filename == ''):
             files = request.files.getlist('files[]')
 
+        # Si toujours aucun fichier, récupérer toutes les entrées de request.files
+        if not files:
+            files = list(request.files.values())
+
         if not files:
             return jsonify({'error': 'No files provided'}), 400
 
@@ -137,7 +172,7 @@ def upload_file():
             })
 
         task_id = str(uuid.uuid4())
-        tasks[task_id] = {'status': 'processing', 'result': None}
+        tasks[task_id] = {'status': 'processing', 'progress': 'Initialisation', 'percent': 0, 'result': None}
         
         thread = threading.Thread(target=process_files_task, args=(task_id, files_data, selected_option, mod, edu))
         thread.start()
@@ -161,7 +196,7 @@ def get_result(task_id):
     elif task['status'] == 'failed':
         return jsonify({'status': 'failed', 'error': task['result']})
     else:
-        return jsonify({'status': 'processing'})
+        return jsonify({'status': 'processing', 'progress': task.get('progress'), 'percent': task.get('percent', 0), 'preview': task.get('preview', '')})
 
 def remove_accents(input_str):
     # Transforme les caractères accentués en non accentués

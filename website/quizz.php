@@ -4,7 +4,64 @@ include 'begin_php.php';
 $task_id = $_SESSION['task_id'] ?? null;
 unset($_SESSION['task_id']); // Supprimer l'ID pour ne pas réutiliser
 
-// L'ancien code de récupération de données sera déclenché par JS
+// Si pas de task_id, on récupère les données stockées (accès via dashboard)
+if (!$task_id) {
+  $supabaseUrl = $config['SUPABASE_URL'];
+  $supabaseKey = $config['SUPABASE_KEY'];
+  $table = $config['SUPABASE_TABLE'];
+
+  $idRequest = $_SESSION['reponse'] ?? 0;
+  if ($idRequest) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_URL, "$supabaseUrl/rest/v1/$table?id_request=eq.$idRequest");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      "apikey: $supabaseKey",
+      "Authorization: Bearer $supabaseKey",
+      "Content-Type: application/json",
+      "Accept: application/json"
+    ]);
+    $response = curl_exec($ch);
+    $data = json_decode($response, true);
+    curl_close($ch);
+
+    if (is_array($data)) {
+      usort($data, fn($a, $b) => $a['id'] <=> $b['id']);
+      $page = '';
+      $result = '';
+      foreach ($data as $row) {
+        if ($row['type'] == 'quiz') {
+          $page .= $row['content'] . ' ';
+        } else {
+          $result .= $row['content'] . ' ';
+        }
+      }
+      // Récupérer tous les quiz et résumés
+      $quizDataArr = [];
+      // Capturer plusieurs formats de quiz
+      $patterns = [
+        '/```json(.*?)```/s',
+        '/```(.*?)```/s',
+        '/---QUIZ_START---(.*?)---QUIZ_END---/s'
+      ];
+      foreach ($patterns as $pat) {
+        if (preg_match_all($pat, $page, $m)) {
+          foreach ($m[1] as $q) {
+            $quizDataArr[] = trim($q);
+          }
+        }
+      }
+
+      $resumeArr = [];
+      if (preg_match_all('/begin{document}(.*?)\\\end{document}/s',  $result, $matches)) {
+        foreach ($matches[1] as $l) {
+          $resumeArr[] = trim($l);
+        }
+      }
+    }
+  }
+}
 ?>
 <?php if (!isset($_SESSION['access_token'])) {
   header('Location: login.php');
@@ -49,25 +106,34 @@ unset($_SESSION['task_id']); // Supprimer l'ID pour ne pas réutiliser
   <script>
     // Passer l'URL du serveur Flask et le task_id au JavaScript
     const FLASK_URL = "<?php echo rtrim($config['FLASK_URL'], '/'); ?>";
-    const TASK_ID = "<?php echo $task_id; ?>";
+    const TASK_ID = "<?php echo $task_id ?? ''; ?>";
+
+    // Données initiales (cas dashboard)
+    const HAS_INITIAL_DATA = <?php echo isset($quizDataArr) && count($quizDataArr) ? 'true' : 'false'; ?>;
+    <?php if (isset($quizDataArr)): ?>
+    window.initialQuizArray = <?php echo json_encode($quizDataArr, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); ?>;
+    window.initialResumeArray = <?php echo json_encode($resumeArr ?? [], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); ?>;
+    <?php endif; ?>
   </script>
   <script src="assets/js/script.js"></script>
 </head>
 
 <body>
-  <?php include 'header.html'; 
+  <?php include 'header.html';
   ?>
+
   <div id="loader" style="display:none; text-align:center; margin-top:20px;">
       <div class="spinner" style="margin:auto; width:60px; height:60px; border:8px solid #f3f3f3; border-top:8px solid #3498db; border-radius:50%; animation:spin 1s linear infinite;"></div>
-      <p>Traitement en cours, veuillez patienter...</p>
+      <p id="loader-msg">Préparation...</p>
+      <progress id="loader-bar" value="0" max="100" style="width:80%; height:20px;"></progress>
   </div>
   <div id="error-message" style="display:none; color:red; text-align:center;"></div>
-  
-  <textarea id="latex-input" style="display: none;">
-    <?php echo $contenu2; ?>
-  </textarea>
+  <textarea id="latex-input" style="display:none;"><?php echo $resumeArr[0]; ?></textarea>
+  <textarea id="quiz-input" ><?php echo $quizDataArr[0]; ?></textarea>
+
 
   <h1 id="course-title">Chargement du cours...</h1>
+  <select id="course-select" style="display:none; margin-bottom:10px;"></select>
 
   <!-- Onglets -->
   <div class="tabs">
@@ -120,7 +186,14 @@ unset($_SESSION['task_id']); // Supprimer l'ID pour ne pas réutiliser
                             errorMessage.textContent = 'Une erreur est survenue lors du traitement : ' + data.error;
                             errorMessage.style.display = 'block';
                         }
-                        // Si 'processing', on ne fait rien et on attend le prochain appel
+                        // Mise à jour du message/progression
+                        if (data.progress) {
+                            document.getElementById('loader-msg').textContent = data.progress;
+                        }
+                        if (typeof data.percent !== 'undefined') {
+                            document.getElementById('loader-bar').value = data.percent;
+                        }
+                        // Si 'processing', on attend le prochain appel
                     })
                     .catch(err => {
                         clearInterval(interval);
@@ -129,6 +202,27 @@ unset($_SESSION['task_id']); // Supprimer l'ID pour ne pas réutiliser
                         errorMessage.style.display = 'block';
                     });
             }, 5000); // Interroge toutes les 5 secondes
+        }
+
+        // Les cours seront chargés via loadCourse dans script.js
+
+        function addToCourses(quizContent, resumeContent) {
+            if (quizContent) {
+                const match = quizContent.match(/```json(.*?)```/s) || quizContent.match(/---QUIZ_START---(.*?)---QUIZ_END---/s);
+                if (match && match[1]) {
+                    try {
+                        courseQuizzes.push(JSON.parse(match[1].trim()));
+                    } catch(e) { console.error('JSON parse error', e); }
+                }
+            }
+            if (resumeContent) {
+                const match = resumeContent.match(/\\begin{document}(.*?)\\end{document}/s);
+                if (match && match[1]) {
+                    courseResumes.push(match[1].trim());
+                } else {
+                    courseResumes.push('');
+                }
+            }
         }
 
         function processResults(results) {
@@ -154,27 +248,9 @@ unset($_SESSION['task_id']); // Supprimer l'ID pour ne pas réutiliser
             });
 
             // Mettre à jour le contenu de la page
-            if (quizContent) {
-                const match = quizContent.match(/```json(.*?)```/s) || quizContent.match(/---QUIZ_START---(.*?)---QUIZ_END---/s);
-                if (match && match[1]) {
-                    window.quizData = JSON.parse(match[1].trim());
-                    // Assurez-vous que les fonctions de script.js sont prêtes
-                    if (typeof buildQuiz === 'function') {
-                        buildQuiz();
-                    }
-                }
-            }
-
-            if (resumeContent) {
-                const match = resumeContent.match(/\\begin{document}(.*?)\\end{document}/s);
-                if (match && match[1]) {
-                    document.getElementById('latex-input').value = match[1].trim();
-                    // Assurez-vous que les fonctions de script.js sont prêtes
-                    if (typeof generatePdfFromLatex === 'function') {
-                        generatePdfFromLatex();
-                    }
-                }
-            }
+            addToCourses(quizContent, resumeContent);
+            populateCourseSelector();
+            loadCourse(0);
         }
     });
 
