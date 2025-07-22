@@ -35,10 +35,12 @@ if (!empty($data) && isset($data[0]['content'])) {
     }
   }
 }
-
-if (preg_match('/```json(.*?)```/s',  $page, $matches)) {
+$contenu = "";
+$contenu2 = "";
+if (preg_match('/---QUIZ_START---(.*?)---QUIZ_END---/s',  $page, $matches)) {
   $contenu = trim($matches[1]); // On enlève les espaces inutiles
 }
+
 $contenu2 = "";
 if (preg_match('/begin{document}(.*?)\\\end{document}/s',  $result, $matches)) {
   $contenu2 = trim($matches[1]); // On enlève les espaces inutiles
@@ -91,7 +93,6 @@ if (preg_match('/begin{document}(.*?)\\\end{document}/s',  $result, $matches)) {
 
 <body>
   <?php include 'header.html'; 
-  echo "<textarea> $contenu </textarea>";
   ?>
   <textarea id="latex-input" style="display: none;">
     <?php echo $contenu2; ?>
@@ -145,7 +146,7 @@ if (preg_match('/begin{document}(.*?)\\\end{document}/s',  $result, $matches)) {
       });
     });
   </script>
-
+  <?php include 'footer.html'; ?>
 </body>
 
 </html>

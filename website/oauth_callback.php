@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['access_token'])) {
         
         // Retourner une réponse de succès pour le JavaScript
         header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'redirect' => 'dashboard.php?oauth_success=1']);
+        echo json_encode(['success' => true, 'redirect' => 'form.php']);
         exit;
     } else {
         // Erreur lors de la récupération des détails utilisateur

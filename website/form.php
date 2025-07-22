@@ -77,8 +77,7 @@ if (!isset($_SESSION['access_token'])) {
             100% { transform: rotate(360deg); }
         }
     </style>
-    <?php // include "footer.html"; 
-    ?>
+    <?php include "footer.html"; ?>
 </body>
 
 </html>

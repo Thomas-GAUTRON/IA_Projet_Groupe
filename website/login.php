@@ -28,8 +28,9 @@ function initiateOAuthLogin($provider, $supabase_url, $supabase_key, $redirect_t
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['google_login'])) {
         initiateOAuthLogin('google', $supabase_url, $supabase_key);
-    } elseif (isset($_POST['discord_login'])) {
-        initiateOAuthLogin('discord', $supabase_url, $supabase_key);
+    }
+    if (isset($_POST['github_login'])) {
+        initiateOAuthLogin('github', $supabase_url, $supabase_key);
     }
 }
 
@@ -80,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email_login'])) {
             $_SESSION['access_token'] = $user['access_token'];
             $_SESSION['refresh_token'] = $user['refresh_token'];
             
-            header('Location: dashboard.php');
+            header('Location: form.php');
             exit;
         } else {
             $errorResponse = $result['response'];
@@ -289,6 +290,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email_login'])) {
             width: 20px;
             box-shadow: none;
         }
+        
+        /* Style du bouton GitHub */
+        .github-supabase-btn {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px;
+            margin-top: 10px; /* Espace entre les boutons */
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: #24292e; /* Couleur foncée de GitHub */
+            color: #fff;
+            font-size: 16px;
+            font-family: Roboto, Arial, sans-serif;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 1.5px 6px rgba(0,0,0,.08);
+            transition: background 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            outline: none;
+        }
+        .github-supabase-btn:hover {
+            background: #333;
+            box-shadow: 0 2px 4px rgba(0,0,0,.13);
+        }
+        .github-supabase-btn:active {
+            background: #000;
+        }
+        .github-supabase-btn img {
+            margin-right: 12px;
+            height: 20px;
+            width: 20px;
+            box-shadow: none;
+            filter: invert(1); /* Rend le logo noir en blanc */
+        }
     </style>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -306,10 +343,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email_login'])) {
         
         <!-- Bouton Google style officiel pour Supabase -->
         <div class="oauth-buttons">
-            <form method="POST" style="display: inline;">
+            <form method="POST" style="display: block;">
                 <button type="submit" name="google_login" class="google-supabase-btn">
                     <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" style="height:20px; vertical-align:middle; margin-right:8px;">
                     Se connecter avec Google
+                </button>
+            </form>
+            <form method="POST" style="display: block;">
+                <button type="submit" name="github_login" class="github-supabase-btn">
+                    <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub">
+                    Se connecter avec GitHub
                 </button>
             </form>
         </div>

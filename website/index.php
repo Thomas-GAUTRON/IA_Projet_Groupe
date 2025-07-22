@@ -41,8 +41,6 @@ include 'begin_php.php';
             <a href="register.php" class="btn btn-green">Créer un compte</a>
         <?php endif; ?>
     </div>
-    <footer style="text-align:center; margin:40px 0 10px 0; color:#888;">
-        &copy; <?php echo date('Y'); ?> IA Projet Groupe. Tous droits réservés.
-    </footer>
+    <?php include 'footer.html'; ?>
 </body>
 </html>

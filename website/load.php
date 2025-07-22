@@ -73,13 +73,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $tableau = json_decode($response, true); // Le second paramètre "true" retourne un tableau associatif
     $prefix1 = '---ABSTRACT START---';
-    $prefix2 = '```json';
+    $prefix2 = '---QUIZ_START---';
 
     // Exemple d'utilisation
     $randomInt64Pos = random_int64_positive();
     $_SESSION['reponse'] = $randomInt64Pos;
-
-    $id = getUserIdFromAccessToken($_SESSION['access_token'], $config['SUPABASE_URL'], $config['SUPABASE_KEY']);
 
     foreach ($tableau as $element) {
         if (substr($element, 0, strlen($prefix1)) === $prefix1) {
@@ -88,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $data = [
                     'content' => $chunk,
                     'id_request' => $randomInt64Pos,
-                    'id_user' => $id,
+                    'id_user' => $_SESSION['user_id'],
                     'type' => 'resume'
                 ];
                 $rep = insert_in_supabase($config['SUPABASE_URL'], $config['SUPABASE_KEY'], $config['SUPABASE_TABLE'], $data);
@@ -100,14 +98,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $data = [
                     'content' => $chunk,
                     'id_request' => $randomInt64Pos,
-                    'id_user' => $id,
+                    'id_user' => $_SESSION['user_id'],
                     'type' => 'quiz'
                 ];
                 $rep = insert_in_supabase($config['SUPABASE_URL'], $config['SUPABASE_KEY'], $config['SUPABASE_TABLE'], $data);
                 echo "Quiz : " . $rep['http_code'] . "<br>";
             }
         } else {
-            echo "❌ '$element' ne commence pas par '$prefix'<br>";
+            echo "❌ '$element' ne commence pas par '$prefix1' ou '$prefix2'<br>";
         }
     }
 

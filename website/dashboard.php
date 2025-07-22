@@ -9,9 +9,8 @@ $supabaseKey = $config['SUPABASE_KEY'];
 $table = $config['SUPABASE_TABLE'];
 
 $ch = curl_init();
-$id = getUserIdFromAccessToken($_SESSION['access_token'], $config['SUPABASE_URL'], $config['SUPABASE_KEY']);
 // On sélectionne uniquement id_request avec les valeurs distinctes
-$url = "$supabaseUrl/rest/v1/$table?select=id_request&id_user=eq.$id";
+$url = "$supabaseUrl/rest/v1/$table?select=id_request&id_user=eq.".$_SESSION['user_id'];
 
 curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -94,6 +93,7 @@ if (is_array($data)) {
         }
         ?>
     </div>
+     <?php include 'footer.html'; ?>
 </body>
 
 </html>

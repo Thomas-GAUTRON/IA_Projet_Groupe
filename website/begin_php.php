@@ -75,29 +75,4 @@ function split_text($texte)
     return $chunks;
 }
 
-function getUserIdFromAccessToken($access_token, $supabase_url, $supabase_key)
-{
-    if (isset($_SESSION['id_user'])) {
-        return $_SESSION['id_user'];
-    } else {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_URL, $supabase_url . '/auth/v1/user');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'apikey: ' . $supabase_key,
-            'Authorization: Bearer ' . $access_token
-        ]);
 
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($httpCode === 200) {
-            $user = json_decode($response, true);
-            return $user['id'] ?? null;
-        } else {
-            return null;
-        }
-    }
-}
