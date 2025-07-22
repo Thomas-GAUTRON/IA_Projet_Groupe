@@ -35,21 +35,11 @@ Le projet s’appuie principalement sur **Google Gemini 2.5 Flash** via LangChai
 ## Architecture technique
 
 ```mermaid
-flowchart LR
-    subgraph Navigateur
-        A[Pages PHP/JS (website/)]
-    end
-    subgraph Backend
-        B[Flask API (app_py/)]
-    end
-    subgraph Cloud
-        C[(Supabase <br/> Postgres + Storage)]
-    end
-    A -- Upload PDF / fetch progress --> B
-    B -- JSON quiz / LaTeX résumé --> A
-    A -- Sauvegarde résultats --> C
-    A -- Récupération historiques --> C
-    B -- Stockage temporaire<br/>/download/* --> B
+graph LR
+    A[Frontend<br/>PHP/JS (website/)] -->|Upload PDF / Progress| B[Flask API<br/>app_py/]
+    B -->|JSON quiz / LaTeX résumé| A
+    A -->|CRUD résultats| C[(Supabase)]
+    C -->|Historique| A
 ```
 
 ---
