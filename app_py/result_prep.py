@@ -1,53 +1,65 @@
 import subprocess
 import os
-import re
 import shutil
 import json
 from fpdf import FPDF
-
+'''
+File for functions to manipulate data after AI processing.
+'''
 DOWNLOAD_DIR = "download"
 
-def to_json(input_str, filename):
-    '''Function to transform and save a string into a json file'''
+def to_json(input_str, filename : str):
+    '''Function to transform and save a string into a json file in the download directory'''
+
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
     data = json.loads(input_str)
-    file_path = os.path.join(DOWNLOAD_DIR,filename)
-    with open(file_path, 'w', encoding='utf-8') as f:
+    # Always save in the download directory
+    output_path = os.path.join(DOWNLOAD_DIR, filename)
+    print("j'y fus ")
+    with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
-    return file_path
+
+def out_latex(input : str):
+    '''
+    Function to lighter the clean_json
+    '''
+    temp = input.replace("```latex",'')
+    return temp.replace("```",'')
+
 
 def clean_split_str(input : str):
+    '''
+    Function to clean and split the string created by AI for the abstract
+    '''
     res_tab = input.split("---ABSTRACT END---")
     res_tab.pop()
     for i in range (0,len(res_tab)):
         res_tab[i] = res_tab[i].replace("---ABSTRACT START---",'')
         res_tab[i] = res_tab[i].replace("---ABSTRACT END---",'')
-        res_tab[i] = res_tab[i].replace("```latex",'')
-        res_tab[i] = res_tab[i].replace("```",'')
-    return res_tab
+        res_tab[i] = out_latex(res_tab[i])
+    return res_tab,len(res_tab)
 
 def clean_json(input : str):
+    '''
+    Function to clean and split the string created by AI for the quiz
+    '''
     tab = input.split("---QUIZ_END---")
     tab.pop()
     for i in range(0,len(tab)):
         tab[i] = tab[i].replace("---QUIZ_START---",'')
         tab[i] = tab[i].replace("```json",'')
         tab[i] = tab[i].replace("```",'')
-    return tab
+    return tab,len(tab)
 
 
 def to_pdf(input: str, filename: str):
     '''
     This function takes a LaTeX string and converts it to a PDF file.
     The PDF and .tex are saved in the 'download' directory with the given filename.
-    All temporary files are created in the same directory as this code.
-    
-    Returns:
-        str: The full path to the generated PDF file
     '''
-    #input = process_latex(input, filename)
     script_dir = os.path.dirname(os.path.abspath(__file__))
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
+
     # Use a temp directory inside the script directory
     temp_dir = os.path.join(script_dir, "_temp_pdflatex")
     os.makedirs(temp_dir, exist_ok=True)
@@ -153,81 +165,3 @@ def to_pdf(input: str, filename: str):
         # Clean up temp files
         print(f"Cleaning up temp directory: {temp_dir}")
         shutil.rmtree(temp_dir, ignore_errors=True)
-
-
-def process_latex(latex_str: str, filename: str) -> str:
-    """
-    Replace LaTeX preamble and postamble, insert title as 'abstract_<filename>'.
-    """
-
-    new_preamble = f"""\\documentclass[a4paper,12pt]{{article}}
-\\usepackage[utf8]{{inputenc}}
-\\usepackage[T1]{{fontenc}}
-\\usepackage{{amsmath,amsfonts,amssymb}}
-\\usepackage{{graphicx}}
-\\usepackage{{geometry}}
-\\geometry{{a4paper, margin=1in}}
-\\usepackage{{hyperref}}
-\\hypersetup{{
-    colorlinks=true,
-    linkcolor=blue,
-    filecolor=magenta,
-    urlcolor=cyan,
-}}
-\\usepackage{{fancyhdr}}
-\\pagestyle{{fancy}}
-\\fancyhf{{}}
-\\rhead{{\\thepage}}
-\\renewcommand{{\\headrulewidth}}{{0.4pt}}
-\\renewcommand{{\\footrulewidth}}{{0pt}}
-\\setlength{{\\headheight}}{{14.5pt}}  % Fix fancyhdr warning
-\\title{{abstract_{filename}}}
-\\author{{}}  % Avoid "No \\author given" warning
-\\date{{}}
-\\begin{{document}}
-\\maketitle
-"""
-
-    new_postamble = "\\end{{document}}"
-
-    # Extract content between \begin{document} and \end{document}
-    print("WE ARE HERE !!!! ")
-    match = re.search(r"\\begin\{document\}(.*?)\\end\{document\}", latex_str, re.DOTALL)
-    content = match.group(1).strip() if match else latex_str.strip()
-
-    return f"{new_preamble}\n{content}\n{new_postamble}"
-
-def json_quiz_to_latex(quiz_json, title=None):
-    data = quiz_json
-    if isinstance(quiz_json, str):
-        data = json.loads(quiz_json)
-    if title is None:
-        title = data.get("courseTitle", "Quiz généré")
-    latex = r"""\documentclass[a4paper,12pt]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{amsmath,amsfonts,amssymb}
-\usepackage{geometry}
-\geometry{a4paper, margin=1in}
-\title{""" + title + r"""}
-\begin{document}
-\maketitle
-"""
-    latex += "\\section*{Questions}\n"
-    for idx, item in enumerate(data["quiz"], 1):
-       latex += f"\\textbf{{Q{idx}.}} {item['question']} \n"
-       latex += "\\begin{itemize}\n"
-       for choice in item["choices"]:
-           latex += f"  \\item {choice}\n"
-       latex += "\\end{itemize}\n"
-       latex += '\\vspace{0.5em}\n'
-    
-    latex += "\\newpage\n"
-    latex += "\\section*{Réponses et explications}\n"
-    for idx, item in enumerate(data["quiz"], 1):
-        latex += f"\\noindent \\textbf{{Q{idx}.}}\\par\n"
-        latex += f"Réponse : {item['answer']}\\par\n"
-        latex += f"Explication : {item['explanation']}\\par\n"
-        latex += '\\vspace{0.5em}\n'
-    latex += '\\end{document}'
-    return latex

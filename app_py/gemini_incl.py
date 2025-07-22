@@ -2,9 +2,19 @@ import os
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 
+current_directory = os.path.dirname(os.path.abspath(__file__))
+
+'''
+File for a class containing the AI agent via LangChain
+'''
 class AI:
-    def __init__(self,key = os.getenv("GOOGLE_API_KEY"),mod = "gemini-2.5-flash",temp=0):
+    '''
+    General Class for AI - Using Gemini 2.5 Flash
+    '''
+    def __init__(self,key = None,mod = "gemini-2.5-flash",temp=0):
         self.key = key
+        if self.key is None:
+            self.key = os.getenv("GOOGLE_API_KEY")
         self.model = mod
         self.temp = temp
         self.llm = None
@@ -15,6 +25,9 @@ class AI:
             self.llm = ChatGoogleGenerativeAI(model = self.model,temperature = self.temp)
     
     def key_setup(self):
+        '''
+        Function to set-up the API key for the model
+        '''
         if "GOOGLE_API_KEY" not in os.environ:
             print("Error in environment key, using .env instead")
             load_dotenv()
@@ -26,6 +39,11 @@ class AI:
         return True
 
     def invoke_abs(self,sources,type = 0,edu = False):
+        '''
+        Function to ask the AI about the abstract. 
+        Sources : array of string
+        edu : boolean to ask for a more educational view of the abstract
+        '''
         preamble =  r"""\documentclass[12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -111,6 +129,10 @@ class AI:
         
 
     def invoke_quiz(self,sources,type = 0):
+        '''
+        Function to ask the AI to generate a quiz. 
+        Sources : array of string
+        '''
         prompt = "You are an expert academic engine specialised in quiz creation. Generate a multiple-choice quiz " \
         "based on the following array of strings, in which each index is the text of a source, while using the same language as the sources."
 
@@ -127,22 +149,27 @@ class AI:
         "inferential reasoning, understanding of key concepts, identification of main ideas, vocabulary)." \
         "5. Tone : Maintain a clear, concise, and objective tone." 
 
-        output_format="**Output Format:** The output must be format that can be saved directly with as much json " \
-        "files as there is sources like the following :"
+        output_format="**Output Format:** The output must be a format must be saved directly as a json file, encapsulated by ---QUIZ_START--- and ---QUIZ_END---. " \
+            "The format of your json response must be like the following :"
+
         ex_json_file=""
-        with open("ex.json", "r", encoding="utf-8") as f:
+        with open(f"{current_directory}/ex.json", "r", encoding="utf-8") as f:
             ex_json_file = f.read()
 
         if type == 1:
-            add = "Create one quiz for each source file given. Separate the quiz for each source by a ---QUIZ_START--- and ---QUIZ_END---"\
-                "with the format like : ---QUIZ_START--- [quiz of Source 1 in json] ---QUIZ_END--- ---QUIZ_START--- [quiz of Source 2 in json] ---QUIZ_END---"
-            result = self.llm.invoke(f"{prompt}\n{add}\n{input_specs}\n{sources}\n{quiz_param}\n{output_format}\n{ex_json_file}")
+            add = "**Output Format:** Create one quiz for each source file given with each file encapsulated by ---QUIZ_START--- and ---QUIZ_END--- like : "\
+                "with the format like : ---QUIZ_START--- [quiz of Source 1 in json] ---QUIZ_END--- ---QUIZ_START--- [quiz of Source 2 in json] ---QUIZ_END---**" \
+                "The format of your json files must be like the following : "
+            result = self.llm.invoke(f"{prompt}\n{input_specs}\n{sources}\n{quiz_param}\n{add}\n{ex_json_file}")
             return result.content
         result = self.llm.invoke(f"{prompt}\n{input_specs}\n{sources}\n{quiz_param}\n{output_format}\n{ex_json_file}")
         return result.content
     
 
 def translate(choice):
+    '''
+    Small function to transform a string choice from the form into a boolean
+    '''
     if choice == "mtpl" or choice == "educational": # Multiple abstract and educational
         return True
     else:# One document for all and professional

@@ -1,6 +1,0 @@
-Flask
-PyPDF2
-fpdf
-langchain-google-genai
-pdfkit
-markdown

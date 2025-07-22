@@ -1,0 +1,10 @@
+os
+sys
+subprocess
+shutil
+dotenv
+json
+fpdf
+flask
+PyPDF2
+langchain_google_genai
