@@ -1,202 +1,183 @@
 # IA_Projet_Groupe
 
-## Présentation
+## Présentation générale
 
-**IA_Projet_Groupe** est une plateforme web complète d’analyse, de génération de résumés et de quiz interactifs à partir de documents PDF, exploitant l’intelligence artificielle (Google Gemini, Mistral, etc.).
+**IA_Projet_Groupe** est une plateforme web qui permet :
 
-- **Backend Python (Flask)** : Extraction, traitement IA, génération de PDF LaTeX (avec équations mathématiques).
-- **Frontend PHP/JS** : Interface utilisateur moderne, upload, restitution dynamique, correction instantanée, téléchargement PDF.
-- **Stockage cloud** : Supabase.
+1. d’uploader un ou plusieurs fichiers PDF ;
+2. d’en extraire le texte ;
+3. de générer automatiquement :
+   - un **résumé LaTeX** propre (avec formules mathématiques intactes) ;
+   - un **quiz interactif** corrigé et commenté ;
+4. de consulter, télécharger (PDF) ou partager ces contenus ;
+5. de conserver tous les résultats dans **Supabase** pour un accès ultérieur (Dashboard).
+
+Le projet s’appuie principalement sur **Google Gemini 2.5 Flash** via LangChain, Flask côté backend et une interface PHP/JS moderne.
 
 ---
 
-## Fonctionnalités principales
+## Nouveautés majeures (mai 2025)
 
-- **Téléversement de PDF** (multi-fichiers)
-- **Extraction de texte** et traitement IA (résumé, quiz)
-- **Quiz interactif** avec correction et explications
-- **Affichage dynamique** (résumé, quiz, score)
-- **Téléchargement PDF** (résumé ou quiz, rendu mathématique LaTeX)
-- **Personnalisation avancée** (prompts, styles)
-- **Stockage cloud** (Supabase)
+- 🔄 **Refonte du backend** : le dossier `basic_2/` est devenu `app_py/` ; architecture plus claire, routes Flask découplées, traitement asynchrone via threads.
+- ⏳ **Traitement asynchrone & suivi de progression** : l’upload renvoie un `task_id` ; le frontend interroge `/result/<task_id>` pour connaître l’avancement (message + barre % + aperçu).
+- 🗄️ **Stockage Supabase** : tous les quiz/résumés sont désormais automatiquement enregistrés (PHP `save_result.php`) ; consultation via le Dashboard.
+- 📄 **Génération PDF serveur** : deux nouvelles routes Flask :
+  - `POST /latex_to_pdf` (résumés LaTeX ➜ PDF)
+  - `POST /json_quiz_to_pdf` (quiz JSON ➜ PDF)
+  Les PDF sont servis depuis `/download/<file>.pdf`.
+- 🖥️ **Interface multi-cours** : onglet « Quiz », « Résumé », ou les deux + sélecteur de cours lorsque plusieurs résultats sont chargés.
+- 🧮 **Rendu MathJax dynamique** + conversion LaTeX ➜ HTML pour l’aperçu résumé.
+- 🗂️ **install_requirements.py** : installation automatique des dépendances Python manquantes lors du premier lancement.
+- 🧹 Nettoyage du code, suppression de `Prompt.txt` (prompts intégrés dans `gemini_incl.py`).
 
 ---
 
 ## Architecture technique
 
+```mermaid
+flowchart LR
+    subgraph Navigateur
+        A[Pages PHP/JS (website/)]
+    end
+    subgraph Backend
+        B[Flask API (app_py/)]
+    end
+    subgraph Cloud
+        C[(Supabase <br/> Postgres + Storage)]
+    end
+    A -- Upload PDF / fetch progress --> B
+    B -- JSON quiz / LaTeX résumé --> A
+    A -- Sauvegarde résultats --> C
+    A -- Récupération historiques --> C
+    B -- Stockage temporaire<br/>/download/* --> B
 ```
-[ Utilisateur ]
-      |
-      v
-[ PHP/JS (website/) ] <----> [ Python/Flask (basic_2/) ]
-      |                                 
-      v                                 
-[ Supabase (cloud) ]       
-```
-
-- **Frontend** : PHP (pages dynamiques), JS (quiz, interactions, appel API Flask)
-- **Backend** : Flask (API, extraction, IA, génération PDF LaTeX)
-- **PDF** : Génération serveur (rendu parfait des équations)
-- **Stockage** : Supabase (résultats, quiz, logs)
 
 ---
 
-## Structure du projet (2025)
+## Organisation du dépôt
 
 ```
 IA_Projet_Groupe/
 │
-├── basic_2/                # Backend Python (Flask, IA, extraction PDF, génération PDF)
-│   ├── app.py              # Serveur Flask, routes API, upload, génération PDF
-│   ├── classes.py          # Gestion des PDF et résultats
-│   ├── gemini_incl.py      # Prompts et appels à l’IA
-│   ├── Prompt.txt          # Exemples de prompts IA
+├── app_py/                 # Backend Flask & IA
+│   ├── app.py              # Routes API, gestion tâches, download PDF
+│   ├── classes.py          # Modèles Source / Result (extraction PDF)
+│   ├── gemini_incl.py      # Wrapper LangChain + prompts Gemini
+│   ├── result_prep.py      # Post-traitement (LaTeX, JSON ➜ LaTeX, PDF)
+│   ├── install_requirements.py # Installateur automatique
 │   ├── requirements.txt    # Dépendances Python
-│   ├── result_prep.py      # Utilitaires de post-traitement, génération PDF LaTeX
-│   ├── ex.json             # Exemple de quiz généré
+│   ├── uploads/            # PDF uploadés (temporaire)
+│   ├── download/           # PDF générés (résumé / quiz)
+│   └── ex.json             # Exemple de quiz
 │
-├── website/                # Frontend PHP/JS
-│   ├── index.php           # Accueil, upload PDF
-│   ├── quizz.php           # Affichage quiz dynamique
-│   ├── form.php            # Formulaire d’upload
-│   ├── load.php            # Envoi des fichiers au backend Flask
-│   ├── dashboard.php       # Tableau de bord utilisateur
-│   ├── login.php           # Authentification
-│   ├── register.php        # Inscription
-│   ├── oauth_callback.php  # OAuth callback
-│   ├── change.php          # Script de modification
-│   ├── begin_php.php       # Init session/config
-│   ├── header.html         # En-tête HTML
-│   ├── footer.html         # Pied de page HTML
+├── website/                # Frontend
+│   ├── *.php               # Pages dynamiques (upload, quizz, dashboard…)
 │   ├── assets/
-│   │   ├── css/
-│   │   │   └── styles.css  # Styles principaux du site
-│   │   └── js/
-│   │       └── script.js   # Script JS principal (quiz, interactions, appel API)
+│   │   ├── css/styles.css  # Styles Bootstrap-like + custom
+│   │   └── js/script.js    # Logique quiz, sélecteur cours, appels API
+│   └── header.html & footer.html
 │
-├── config_example.env      # Exemple de configuration (à copier en .env)
-└── Readme.md               # Documentation du projet
+├── config_example.env       # Modèle de fichier .env (Supabase & Flask URL)
+└── Readme.md                # Vous y êtes 👋
 ```
 
 ---
 
-## Rôle des fichiers/dossiers principaux
+## Détail des fichiers clés
 
-| Élément                        | Rôle/Fonction principale                                      |
-|------------------------------- |--------------------------------------------------------------|
-| basic_2/app.py                 | Serveur Flask, upload, IA, génération PDF LaTeX               |
-| basic_2/classes.py             | Gestion des PDF et résultats                                  |
-| basic_2/gemini_incl.py         | Prompts et appels à l’IA                                      |
-| basic_2/Prompt.txt             | Exemples de prompts IA                                        |
-| basic_2/requirements.txt       | Dépendances Python                                            |
-| basic_2/result_prep.py         | Post-traitement, génération PDF LaTeX                         |
-| basic_2/ex.json                | Exemple de quiz généré                                        |
-| basic_2/uploads/               | Stockage temporaire des PDF uploadés                          |
-| basic_2/templates/             | Templates HTML Flask                                          |
-| website/index.php              | Accueil, upload PDF                                           |
-| website/quizz.php              | Affichage quiz dynamique                                      |
-| website/form.php               | Formulaire d’upload PDF                                       |
-| website/load.php               | Envoi des fichiers au backend Flask                           |
-| website/dashboard.php          | Tableau de bord utilisateur                                   |
-| website/login.php              | Authentification                                              |
-| website/register.php           | Inscription                                                   |
-| website/oauth_callback.php     | OAuth callback                                                |
-| website/change.php             | Script de modification                                        |
-| website/begin_php.php          | Init session/config                                           |
-| website/header.html            | En-tête HTML                                                  |
-| website/footer.html            | Pied de page HTML                                             |
-| website/assets/css/styles.css  | Styles principaux du site                                     |
-| website/assets/js/script.js    | Script JS principal (quiz, interactions, appel API)           |
-| config_example.env             | Exemple de configuration globale (à copier en .env)           |
-| Readme.md                      | Documentation du projet                                       |
+| Chemin | Rôle principal |
+|--------|----------------|
+| **app_py/app.py** | Point d’entrée Flask : upload, suivi de tâche, génération PDF |
+| **app_py/gemini_incl.py** | Classe `AI` : appels Gemini + prompts français/anglais |
+| **app_py/result_prep.py** | Nettoyage JSON quiz ➜ LaTeX, compilation LaTeX ➜ PDF |
+| **website/quizz.php** | Interface quiz/résumé + loader + onglets + export PDF |
+| **website/assets/js/script.js** | Construction UI quiz, appels `/json_quiz_to_pdf` & `/latex_to_pdf` |
+| **website/save_result.php** | Envoi des résultats à Supabase |
+| **app_py/install_requirements.py** | Script de fallback pour installer les packages manquants |
 
 ---
 
-## Installation & configuration
+## Installation
 
-### Prérequis
-
-- Python 3.10+
-- PHP 8+
-- Serveur web local (WAMP, XAMPP, etc.)
-- Compte Supabase (base de données PostgreSQL)
-- Clé API Google Gemini (ou autre IA compatible)
-- **pdflatex** installé (pour la génération PDF LaTeX)
-
-### Dépendances Python
-
-Dans `basic_2/requirements.txt` :
-```
-Flask
-PyPDF2
-fpdf
-langchain-google-genai
-pdfkit
-markdown
-```
-Installer avec :
+### 1. Cloner le dépôt
 ```bash
-pip install -r basic_2/requirements.txt
+git clone https://github.com/votre_org/IA_Projet_Groupe.git
+cd IA_Projet_Groupe
 ```
 
-### Configuration
+### 2. Backend Python
+```bash
+cd app_py
+python -m venv .venv
+source .venv/bin/activate  # PowerShell : .venv\Scripts\Activate
+python install_requirements.py  # installe automatiquement requirements.txt
+python app.py               # démarre le serveur sur http://127.0.0.1:5000
+```
 
-1. **Supabase**  
-   Copier `config_example.env` en `.env` et renseigner :
-   - `SUPABASE_URL` : URL de votre projet Supabase
-   - `SUPABASE_KEY` : clé API (publique)
-   - `SUPABASE_TABLE` : nom de la table (ex : documents)
-   - `FLASK_URL` : URL de l’API Flask
+> Le script crée automatiquement `uploads/` et `download/` si nécessaire.
 
-2. **Backend Python**  
-   - Placer vos clés API IA dans les variables d’environnement ou un fichier `.env` (pour Google Gemini).
-   - Vérifier que `pdflatex` est installé et accessible dans le PATH.
+### 3. Frontend PHP
 
-3. **Lancement**
-   - Démarrer le backend Flask :
-     ```bash
-     cd basic_2
-     python app.py
-     ```
-   - Démarrer le serveur web (WAMP/XAMPP) et accéder à `http://localhost/IA_Projet_Groupe/website/index.php`
+1. Copier `config_example.env` en `.env` **à la racine** puis renseigner :
+   - `SUPABASE_URL`, `SUPABASE_KEY`, `SUPABASE_TABLE`
+   - `FLASK_URL` (ex. `http://127.0.0.1:5000`)
+2. Placer le dossier `website/` dans votre virtual-host (WAMP/XAMPP). Exemple :
+   - `http://localhost/IA_Projet_Groupe/website/index.php`
 
----
+> Les pages vérifient automatiquement la présence d’un token OAuth Google (voir `login.php`).
 
-## Utilisation
+### 4. Dépendances JS (CDN)
+- MathJax 3.2.2
+- jsPDF 2.5.1 (+ html2canvas)
 
-- **Accueil** : Téléversez un ou plusieurs PDF, choisissez le type d’analyse (Résumé, Quiz, ou les deux).
-- **Résumés** : Consultez les résumés générés (format texte enrichi, LaTeX).
-- **Quiz** : Répondez aux quiz générés automatiquement, correction instantanée, explications détaillées, score affiché.
-- **Téléchargement PDF** :
-  - Résumés et quiz peuvent être exportés en PDF (rendu mathématique parfait via LaTeX).
-  - Le bouton "Télécharger le quiz en PDF" appelle le backend Python qui compile le LaTeX et sert le PDF.
-- **Personnalisation** : Modifiez les prompts IA (`Prompt.txt`), les styles CSS, selon vos besoins.
+Elles sont chargées via CDN, aucun build Node n’est requis.
 
 ---
 
-## Personnalisation avancée
+## Flux de travail
 
-- **Prompts IA** : Modifiez `Prompt.txt` ou les prompts dans `gemini_incl.py` pour adapter le style, la langue, la difficulté, etc.
-- **Styles** : Adaptez `website/assets/css/styles.css` pour personnaliser l’UI.
-- **Quiz JS** : Modifiez `website/assets/js/script.js` pour changer la logique ou l’affichage du quiz.
+1. L’utilisateur uploade un ou plusieurs PDF depuis `index.php` et choisit :
+   - **1** ➜ générer Résumé uniquement
+   - **2** ➜ générer Quiz uniquement
+   - **3** ➜ Résumé puis Quiz
+   - **4** ➜ Résumé uniquement
+2. `index.php` envoie le form-data à `app_py/app.py` :`POST /`.
+3. Flask crée une **tâche asynchrone** (`task_id`) et renvoie immédiatement JSON :`{"task_id": "…"}`.
+4. Le frontend bascule sur `quizz.php` qui :
+   - affiche un loader
+   - interroge périodiquement `/result/<task_id>`
+   - met à jour la barre de progression + aperçu (`preview`).
+5. Lorsque le statut passe à `completed`, le résultat (liste de chaînes) est reçu ; `script.js` :
+   - nettoie le JSON / LaTeX
+   - construit l’interface Quiz & Résumé
+6. Les boutons « Télécharger PDF » déclenchent les appels aux routes `/json_quiz_to_pdf` ou `/latex_to_pdf` qui retournent l’URL du PDF compilé.
+7. `save_result.php` sauvegarde automatiquement le contenu dans Supabase afin d’être listé dans `dashboard.php`.
 
 ---
 
-## Dépannage & FAQ
+## Dépannage
 
-- **Problème d’API IA** : Vérifiez la clé dans `.env` ou les variables d’environnement.
-- **Erreur Supabase** : Vérifiez l’URL, la clé et le nom de la table dans `.env`.
-- **PDF non généré** : Vérifiez les logs Flask et la présence de `pdflatex`.
-- **Upload ne fonctionne pas** : Vérifiez les droits sur le dossier `uploads/` et la configuration Flask.
-- **Quiz ou résumé non affiché** : Vérifiez la communication entre le frontend (PHP) et le backend (Flask).
+| Problème | Piste de résolution |
+|----------|--------------------|
+| **Aucune progression** | Vérifier que `app.py` tourne bien et que le port est accessible (FLASK_URL). |
+| **Erreur “Aucun LaTeX fourni”** | S’assurer que le LaTeX est correctement encapsulé dans `\begin{document}…\end{document}`. |
+| **PDF vide / syntax error** | Installer `pdflatex` (TeX Live) et s’assurer qu’il est dans le PATH. |
+| **401 Supabase** | Mauvaise `SUPABASE_KEY` ou RLS actif sur la table. |
+| **JSON parse error** | Le prompt Gemini a parfois des échappements \ → vérifier `gemini_incl.clean_json`. |
 
 ---
 
-## Auteurs
+## Roadmap
 
-- Projet réalisé par le groupe IA_Projet_Groupe
-- Encadré par [Nom de l’enseignant ou du référent]
+- Passer le traitement asynchrone à Celery + Redis (pour décharger le serveur Flask).
+- Authentification OAuth entièrement côté Supabase Auth.
+- Interface React moderne (remplacer PHP) + build Vite.
+- Fine-tuning Mistral-7B local pour réduire la dépendance API.
 
-## Licence
+---
 
-Ce projet est open-source, sous licence MIT.
+## Auteurs & Licence
+
+- Projet réalisé par **IA_Projet_Groupe** (DP · FA · GT)
+- Encadré par *Nom de l’enseignant*
+- Licence **MIT**

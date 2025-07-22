@@ -2,15 +2,16 @@
 include 'begin_php.php';
 
 $task_id = $_SESSION['task_id'] ?? null;
-unset($_SESSION['task_id']); // Supprimer l'ID pour ne pas réutiliser
+// Désactivé : on conserve désormais le task_id tant que la génération n’est pas terminée
+unset($_SESSION['task_id']);
 
 // Si pas de task_id, on récupère les données stockées (accès via dashboard)
 if (!$task_id) {
   $supabaseUrl = $config['SUPABASE_URL'];
   $supabaseKey = $config['SUPABASE_KEY'];
   $table = $config['SUPABASE_TABLE'];
-
   $idRequest = $_SESSION['reponse'] ?? 0;
+
   if ($idRequest) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -54,7 +55,7 @@ if (!$task_id) {
       }
 
       $resumeArr = [];
-      if (preg_match_all('/begin{document}(.*?)\\\end{document}/s',  $result, $matches)) {
+      if (preg_match_all('/\\\begin{document}(.*?)\\\end{document}/s',  $result, $matches)) {
         foreach ($matches[1] as $l) {
           $resumeArr[] = trim($l);
         }
@@ -107,6 +108,10 @@ if (!$task_id) {
     // Passer l'URL du serveur Flask et le task_id au JavaScript
     const FLASK_URL = "<?php echo rtrim($config['FLASK_URL'], '/'); ?>";
     const TASK_ID = "<?php echo $task_id ?? ''; ?>";
+    // Enregistrer le task_id pour un suivi global dans le header
+    if (TASK_ID) {
+      localStorage.setItem('current_task_id', TASK_ID);
+    }
 
     // Données initiales (cas dashboard)
     const HAS_INITIAL_DATA = <?php echo isset($quizDataArr) && count($quizDataArr) ? 'true' : 'false'; ?>;
@@ -119,7 +124,7 @@ if (!$task_id) {
 </head>
 
 <body>
-  <?php include 'header.html';
+  <?php include 'header.php';
   ?>
 
   <div id="loader" style="display:none; text-align:center; margin-top:20px;">
@@ -128,8 +133,8 @@ if (!$task_id) {
       <progress id="loader-bar" value="0" max="100" style="width:80%; height:20px;"></progress>
   </div>
   <div id="error-message" style="display:none; color:red; text-align:center;"></div>
-  <textarea id="latex-input" style="display:none;"><?php echo $resumeArr[0]; ?></textarea>
-  <textarea id="quiz-input" ><?php echo $quizDataArr[0]; ?></textarea>
+  <textarea id="latex-input" style="display:none;"><?php echo isset($resumeArr) ? (is_array($resumeArr) ? ($resumeArr[0] ?? '') : $resumeArr) : ''; ?></textarea>
+  <textarea id="quiz-input" style="display:none;"><?php echo isset($quizDataArr) ? (is_array($quizDataArr) ? ($quizDataArr[0] ?? '') : $quizDataArr) : ''; ?></textarea>
 
 
   <h1 id="course-title">Chargement du cours...</h1>
@@ -177,11 +182,14 @@ if (!$task_id) {
                     .then(data => {
                         if (data.status === 'completed') {
                             clearInterval(interval);
+                            // Suppression du task_id stocké globalement
+                            localStorage.removeItem('current_task_id');
                             loader.style.display = 'none';
                             container.style.display = 'flex';
                             processResults(data.result);
                         } else if (data.status === 'failed') {
                             clearInterval(interval);
+                            localStorage.removeItem('current_task_id');
                             loader.style.display = 'none';
                             errorMessage.textContent = 'Une erreur est survenue lors du traitement : ' + data.error;
                             errorMessage.style.display = 'block';
@@ -220,6 +228,7 @@ if (!$task_id) {
                 if (match && match[1]) {
                     courseResumes.push(match[1].trim());
                 } else {
+
                     courseResumes.push('');
                 }
             }

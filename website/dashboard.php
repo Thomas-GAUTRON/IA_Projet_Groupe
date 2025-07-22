@@ -56,28 +56,11 @@ if (is_array($data)) {
     <title>Dashboard | IA Projet Groupe</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="assets/css/styles.css">
-    <style>
 
-
-        .container2 {
-            max-width: 600px;
-            margin: 40px auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
-            padding: 30px 20px;
-            text-align: center;
-        }
-
-        h1 {
-            color: #007bff;
-        }
-
-    </style>
 </head>
 
 <body>
-    <?php include 'header.html'; ?>
+    <?php include 'header.php'; ?>
     <div class="container2">
         <h1>Bienvenue sur votre dashboard</h1>
         <p>Bonjour, <b><?php echo htmlspecialchars($_SESSION['user_email']); ?></b> !</p>

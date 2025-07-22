@@ -15,7 +15,7 @@ if (!isset($_SESSION['access_token'])) {
 </head>
 
 <body>
-    <?php include 'header.html'; ?>
+    <?php include 'header.php'; ?>
     <h1>Upload PDF Files</h1>
     <form action="load.php" method="post" enctype="multipart/form-data">
         <div class="form-group">
@@ -71,12 +71,7 @@ if (!isset($_SESSION['access_token'])) {
             document.getElementById('loader').style.display = 'block';
         });
     </script>
-    <style>
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+
     <?php include "footer.html"; ?>
 </body>
 

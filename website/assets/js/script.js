@@ -200,6 +200,7 @@ function compileLaTeX() {
 
     // Afficher le résultat
     outputDiv.innerHTML = '<div class="latex-document">' + htmlContent + '</div>';
+    outputDiv.style.display = 'block';
 
     // Afficher un message de succès
     const successMsg = document.createElement('div');
@@ -288,7 +289,7 @@ if (typeof window.initialQuizArray !== 'undefined' && Array.isArray(window.initi
         if (obj && obj.quiz) return obj;
         console.warn('Objet quiz invalide', obj);
         return null;
-      } catch(e) {
+      } catch (e) {
         console.error('JSON parse error', e);
         return null;
       }
@@ -298,11 +299,12 @@ if (typeof window.initialQuizArray !== 'undefined' && Array.isArray(window.initi
   // Filtrer les null
   window.courseQuizzes = window.courseQuizzes.filter(q => q && q.quiz && Array.isArray(q.quiz));
   window.courseResumes = Array.isArray(window.initialResumeArray) ? window.initialResumeArray.map(r => r) : [];
-  // Assurer la même longueur
-  if (courseResumes.length < courseQuizzes.length) {
-    while (courseResumes.length < courseQuizzes.length) courseResumes.push('');
-  } else if (courseResumes.length > courseQuizzes.length) {
-    courseResumes = courseResumes.slice(0, courseQuizzes.length);
+  // Cas où il n’y a que des résumés et aucun quiz : créer des objets placeholder
+  if (courseQuizzes.length === 0 && courseResumes.length > 0) {
+    window.courseQuizzes = courseResumes.map((_, idx) => ({
+      courseTitle: courseResumes[idx].match(/section\*\{([^}]+)\}/)[1].replace(/\\[a-zA-Z]+/g, '') ?? `Résumé ${idx + 1}`, quiz: []
+
+    }));
   }
   document.addEventListener('DOMContentLoaded', () => {
     populateCourseSelector();
@@ -328,19 +330,22 @@ function populateCourseSelector() {
 }
 
 function loadCourse(index) {
-  if (index < 0 || index >= courseQuizzes.length) return;
+  if ((index < 0 || index >= courseQuizzes.length)) return;
   window.quizData = courseQuizzes[index];
-  if (!window.quizData || !window.quizData.quiz) {
-    alert('Impossible de charger ce quiz : données invalides.');
-    return;
-  }
+  const hasQuiz = window.quizData && Array.isArray(window.quizData.quiz) && window.quizData.quiz.length;
+
   document.getElementById('latex-input').value = courseResumes[index] || '';
 
   // Reconstruire l'interface
-  if (typeof buildQuiz === 'function') buildQuiz();
+  if (hasQuiz && typeof buildQuiz === 'function') {
+    document.getElementById('quiz-pane').classList.remove('hidden');
+    buildQuiz();
+  }
+
   if (typeof generatePdfFromLatex === 'function') generatePdfFromLatex();
-  if (typeof compileLaTeX === 'function') compileLaTeX();
-  document.getElementById('course-title').textContent = quizData.courseTitle || `Cours ${index + 1}`;
+  // if (typeof compileLaTeX === 'function') compileLaTeX();
+
+  document.getElementById('course-title').textContent = quizData?.courseTitle || `Cours ${index + 1}`;
 }
 
 // Génère et affiche le PDF du résumé dans l’iframe
@@ -351,7 +356,8 @@ function generatePdfFromLatex() {
   fetch('http://127.0.0.1:5000/latex_to_pdf', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ latex: latexCode })
+    body: JSON.stringify({ latex: latexCode,
+    title: quizData?.courseTitle || "Résumé" })
   })
     .then(res => res.json())
     .then(data => {
@@ -369,10 +375,15 @@ function generatePdfFromLatex() {
 // Nouvelle fonction : convertir le résumé (HTML) en PDF avec jsPDF
 function downloadResumePdf() {
   const resumeElement = document.getElementById('latex-input').value;
-    fetch('http://127.0.0.1:5000/latex_to_pdf', {
+  fetch('http://127.0.0.1:5000/latex_to_pdf', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ latex: resumeElement })
+    body: JSON.stringify({ 
+      latex: resumeElement,
+      title: document.getElementById('course-title').textContent,
+      filename: document.getElementById('course-title').textContent + '.pdf'
+       })
+ 
   })
     .then(res => res.json())
     .then(data => {
