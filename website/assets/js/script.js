@@ -245,4 +245,55 @@ window.onload = function () {
   }
   checkMathJax();
   loadQuiz();
+
+  // Générer automatiquement l’aperçu PDF du résumé
+  generateResumePreview();
+
 };
+
+// Génère et affiche le PDF du résumé dans l’iframe
+function generateResumePreview() {
+  const latexCode = document.getElementById('latex-input').value;
+  if (!latexCode.trim()) return;
+
+  fetch('http://127.0.0.1:5000/latex_to_pdf', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ latex: latexCode })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.pdf_path) {
+        const pdfFrame = document.getElementById('pdf-frame');
+        if (pdfFrame) {
+          pdfFrame.src = data.pdf_path + '?inline=1';
+          document.getElementById('pdf-container').style.display = 'block';
+        }
+      }
+    })
+    .catch(err => console.error('Erreur de génération du PDF : ', err));
+}
+
+// Nouvelle fonction : convertir le résumé (HTML) en PDF avec jsPDF
+function downloadResumePdf() {
+  const resumeElement = document.getElementById('latex-input').value;
+    fetch('http://127.0.0.1:5000/latex_to_pdf', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ latex: resumeElement })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.pdf_path) {
+        var link = document.createElement('a');
+        link.href = data.pdf_path;
+        //   link.download = 'quiz.pdf'; // Nom du fichier pour le téléchargement
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        alert('Erreur lors de la génération du PDF : ' + data.error);
+      }
+    })
+    .catch(err => alert('Erreur réseau : ' + err));
+}

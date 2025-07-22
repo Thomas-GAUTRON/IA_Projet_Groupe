@@ -1,50 +1,10 @@
 <?php
 include 'begin_php.php';
-$supabaseUrl = $config['SUPABASE_URL'];
-$supabaseKey = $config['SUPABASE_KEY']; // généralement la clé anonyme (public)
-$table = $config['SUPABASE_TABLE'];
-if (isset($_SESSION["reponse"])) {
-  $idRequest = $_SESSION["reponse"];
-} else {
-  $idRequest = 0;
-}
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-curl_setopt($ch, CURLOPT_URL, "$supabaseUrl/rest/v1/$table?id_request=eq.$idRequest");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-  "apikey: $supabaseKey",
-  "Authorization: Bearer $supabaseKey",
-  "Content-Type: application/json",
-  "Accept: application/json"
-]);
-$response = curl_exec($ch);
-$data = json_decode($response, true);
-usort($data, function ($a, $b) {
-  return $a['id'] <=> $b['id'];
-});
 
-$page = "";
-$result = "";
-if (!empty($data) && isset($data[0]['content'])) {
-  foreach ($data as $row) {
-    if ($row['type'] == 'quiz') {
-      $page = $page . $row['content'] . " ";
-    } else {
-      $result = $result . $row['content'] . " ";
-    }
-  }
-}
-$contenu = "";
-$contenu2 = "";
-if (preg_match('/---QUIZ_START---(.*?)---QUIZ_END---/s',  $page, $matches)) {
-  $contenu = trim($matches[1]); // On enlève les espaces inutiles
-}
+$task_id = $_SESSION['task_id'] ?? null;
+unset($_SESSION['task_id']); // Supprimer l'ID pour ne pas réutiliser
 
-$contenu2 = "";
-if (preg_match('/begin{document}(.*?)\\\end{document}/s',  $result, $matches)) {
-  $contenu2 = trim($matches[1]); // On enlève les espaces inutiles
-}
+// L'ancien code de récupération de données sera déclenché par JS
 ?>
 <?php if (!isset($_SESSION['access_token'])) {
   header('Location: login.php');
@@ -84,9 +44,12 @@ if (preg_match('/begin{document}(.*?)\\\end{document}/s',  $result, $matches)) {
     };
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+  <!-- html2canvas nécessaire pour l’export PDF via jsPDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
-    const quizData = <?php echo $contenu; ?>;
+    // Passer l'URL du serveur Flask et le task_id au JavaScript
+    const FLASK_URL = "<?php echo rtrim($config['FLASK_URL'], '/'); ?>";
+    const TASK_ID = "<?php echo $task_id; ?>";
   </script>
   <script src="assets/js/script.js"></script>
 </head>
@@ -94,6 +57,12 @@ if (preg_match('/begin{document}(.*?)\\\end{document}/s',  $result, $matches)) {
 <body>
   <?php include 'header.html'; 
   ?>
+  <div id="loader" style="display:none; text-align:center; margin-top:20px;">
+      <div class="spinner" style="margin:auto; width:60px; height:60px; border:8px solid #f3f3f3; border-top:8px solid #3498db; border-radius:50%; animation:spin 1s linear infinite;"></div>
+      <p>Traitement en cours, veuillez patienter...</p>
+  </div>
+  <div id="error-message" style="display:none; color:red; text-align:center;"></div>
+  
   <textarea id="latex-input" style="display: none;">
     <?php echo $contenu2; ?>
   </textarea>
@@ -117,10 +86,98 @@ if (preg_match('/begin{document}(.*?)\\\end{document}/s',  $result, $matches)) {
 
     <div class="pane" id="resume-pane">
       <h2>Résumé</h2>
-      <p id="output"></p>
+      <div id="pdf-container" style="display:none; margin-top:20px; max-height:650px; border:1px solid #ccc; overflow:auto;">
+        <iframe id="pdf-frame" style="width:100%; height:640px; border:none;"></iframe>
+      </div>
+      <p id="output" style="display:none;"></p>
+      <button id="download-pdf-resume" onclick="downloadResumePdf()">Télécharger le résumé en PDF</button>
+      <!-- Aperçu PDF -->
+      
     </div>
   </div>
   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loader = document.getElementById('loader');
+        const errorMessage = document.getElementById('error-message');
+        const container = document.querySelector('.container');
+
+        if (TASK_ID) {
+            loader.style.display = 'block';
+            container.style.display = 'none';
+
+            const interval = setInterval(() => {
+                fetch(`${FLASK_URL}/result/${TASK_ID}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'completed') {
+                            clearInterval(interval);
+                            loader.style.display = 'none';
+                            container.style.display = 'flex';
+                            processResults(data.result);
+                        } else if (data.status === 'failed') {
+                            clearInterval(interval);
+                            loader.style.display = 'none';
+                            errorMessage.textContent = 'Une erreur est survenue lors du traitement : ' + data.error;
+                            errorMessage.style.display = 'block';
+                        }
+                        // Si 'processing', on ne fait rien et on attend le prochain appel
+                    })
+                    .catch(err => {
+                        clearInterval(interval);
+                        loader.style.display = 'none';
+                        errorMessage.textContent = 'Erreur de communication avec le serveur de traitement.';
+                        errorMessage.style.display = 'block';
+                    });
+            }, 5000); // Interroge toutes les 5 secondes
+        }
+
+        function processResults(results) {
+            // Sauvegarder les résultats en arrière-plan
+            fetch('save_result.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ result: results })
+            }).then(res => res.json()).then(console.log).catch(console.error);
+
+            let quizContent = '';
+            let resumeContent = '';
+
+            const quizPrefix = '---QUIZ_START---';
+            const abstractPrefix = '---ABSTRACT START---';
+
+            results.forEach(element => {
+                if (element.startsWith(quizPrefix)) {
+                    quizContent += element;
+                } else if (element.startsWith(abstractPrefix)) {
+                    resumeContent += element;
+                }
+            });
+
+            // Mettre à jour le contenu de la page
+            if (quizContent) {
+                const match = quizContent.match(/```json(.*?)```/s) || quizContent.match(/---QUIZ_START---(.*?)---QUIZ_END---/s);
+                if (match && match[1]) {
+                    window.quizData = JSON.parse(match[1].trim());
+                    // Assurez-vous que les fonctions de script.js sont prêtes
+                    if (typeof buildQuiz === 'function') {
+                        buildQuiz();
+                    }
+                }
+            }
+
+            if (resumeContent) {
+                const match = resumeContent.match(/\\begin{document}(.*?)\\end{document}/s);
+                if (match && match[1]) {
+                    document.getElementById('latex-input').value = match[1].trim();
+                    // Assurez-vous que les fonctions de script.js sont prêtes
+                    if (typeof generatePdfFromLatex === 'function') {
+                        generatePdfFromLatex();
+                    }
+                }
+            }
+        }
+    });
+
     const buttons = document.querySelectorAll('.tab-button');
     const quizPane = document.getElementById('quiz-pane');
     const resumePane = document.getElementById('resume-pane');

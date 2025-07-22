@@ -52,14 +52,19 @@ def clean_json(input : str):
     return tab,len(tab)
 
 
+
 def to_pdf(input: str, filename: str):
     '''
     This function takes a LaTeX string and converts it to a PDF file.
     The PDF and .tex are saved in the 'download' directory with the given filename.
+    All temporary files are created in the same directory as this code.
+    
+    Returns:
+        str: The full path to the generated PDF file
     '''
+    #input = process_latex(input, filename)
     script_dir = os.path.dirname(os.path.abspath(__file__))
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
-
     # Use a temp directory inside the script directory
     temp_dir = os.path.join(script_dir, "_temp_pdflatex")
     os.makedirs(temp_dir, exist_ok=True)
@@ -165,3 +170,56 @@ def to_pdf(input: str, filename: str):
         # Clean up temp files
         print(f"Cleaning up temp directory: {temp_dir}")
         shutil.rmtree(temp_dir, ignore_errors=True)
+
+def json_quiz_to_latex(quiz_json, title=None):
+    data = quiz_json
+    if isinstance(quiz_json, str):
+        data = json.loads(quiz_json)
+    if title is None:
+        title = data.get("courseTitle", "Quiz généré")
+    latex = r"""\documentclass[a4paper,12pt]{article}
+            \usepackage[utf8]{inputenc}
+            \usepackage[T1]{fontenc}
+            \usepackage{amsmath,amsfonts,amssymb}
+            \usepackage{geometry}
+            \geometry{a4paper, margin=1in}
+            \title{""" + title + r"""}
+            \begin{document}
+            \maketitle
+            """
+    latex += "\\section*{Questions}\n"
+    for idx, item in enumerate(data["quiz"], 1):
+       latex += f"\\textbf{{Q{idx}.}} {item['question']} \n"
+       latex += "\\begin{itemize}\n"
+       for choice in item["choices"]:
+           latex += f"  \\item {choice}\n"
+       latex += "\\end{itemize}\n"
+       latex += '\\vspace{0.5em}\n'
+    
+    latex += "\\newpage\n"
+    latex += "\\section*{Réponses et explications}\n"
+    for idx, item in enumerate(data["quiz"], 1):
+        latex += f"\\noindent \\textbf{{Q{idx}.}}\\par\n"
+        latex += f"Réponse : {item['answer']}\\par\n"
+        latex += f"Explication : {item['explanation']}\\par\n"
+        latex += '\\vspace{0.5em}\n'
+    latex += '\\end{document}'
+    return latex
+
+def prepare_latex(latex : str, title : str, author : str):
+    
+    deb_latex = r"""\documentclass[a4paper,12pt]{article}
+            \usepackage[utf8]{inputenc}
+            \usepackage[T1]{fontenc}
+            \usepackage{amsmath,amsfonts,amssymb}
+            \usepackage{geometry}
+            \geometry{a4paper, margin=1in}
+            \title{""" + title + r"""}
+            \author{""" + author + r"""}
+            \begin{document}
+            \maketitle
+            """
+    end_latex = r"""
+            \end{document}
+            """
+    return deb_latex + latex + end_latex

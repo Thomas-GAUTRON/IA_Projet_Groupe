@@ -147,7 +147,8 @@ class AI:
         "parts of the text) or common misconceptions related to the topic, rather than obviously wrong or irrelevant." \
         "4. Question Types : Vary the question types to test different aspects of understanding (e.g., factual recall, " \
         "inferential reasoning, understanding of key concepts, identification of main ideas, vocabulary)." \
-        "5. Tone : Maintain a clear, concise, and objective tone." 
+        "5. Tone : Maintain a clear, concise, and objective tone."  \
+        "6. For Maths and Special Characters : Use LaTeX to write math and special characters (e.g : \\omega, \\sqrt{2}, \\emptyset, etc.)"
 
         output_format="**Output Format:** The output must be a format must be saved directly as a json file, encapsulated by ---QUIZ_START--- and ---QUIZ_END---. " \
             "The format of your json response must be like the following :"
