@@ -85,9 +85,8 @@ def process_files_task(task_id, files_data, selected_option, mod, edu):
                 abs_text = ai.invoke_abs(source_tab,gem.translate(mod))
                 out_ai.append(abs_text)
                 append_task_preview(task_id, abs_text[:800])
-                update('Nettoyage du résumé', 55)
-                out_ai.append(ai.invoke_quiz(source_tab,gem.translate(mod)))
                 update('Génération du quiz', 80)
+                out_ai.append(ai.invoke_quiz(source_tab,gem.translate(mod)))
                 temp,len_cleaned_ai = prep.clean_json(out_ai[1])
                 for i in range(0,len_cleaned_ai):
                     cleaned_ai.append(temp[i])

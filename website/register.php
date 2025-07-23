@@ -63,8 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if ($result['http_code'] === 200) {
             $message = 'Inscription réussie';
+
             // Optionnel : rediriger vers une page de confirmation
-            // header('Location: confirmation.php');
+            header('Location: form.php');
             // exit;
         } else {
             // Gestion des erreurs spécifiques
@@ -102,158 +103,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        
-        .form-container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: bold;
-        }
-        
-        input[type="email"],
-        input[type="password"],
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-        
-        input[type="email"]:focus,
-        input[type="password"]:focus,
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #007bff;
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .btn:hover {
-            background-color: #0056b3;
-        }
-        
-        .error {
-            color: #dc3545;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-        
-        .success {
-            color: #155724;
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-        
-        .login-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        .login-link a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        
-        .login-link a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
-    <div class="form-container">
-        <h2>Inscription</h2>
-        
-        <?php if ($error): ?>
-            <div class="error"><?php echo htmlspecialchars($error); ?></div>
-        <?php endif; ?>
-        
-        <?php if ($message): ?>
-            <div class="success"><?php echo htmlspecialchars($message); ?></div>
-        <?php endif; ?>
-        
-        <form method="POST" action="">
-            <div class="form-group">
-                <label for="first_name">Prénom :</label>
-                <input type="text" id="first_name" name="first_name" 
-                       value="<?php echo htmlspecialchars($_POST['first_name'] ?? ''); ?>" 
-                       required>
+    <div class="page-container">
+        <?php include 'header.php'; ?>
+        <main class="container auth-container">
+            <div class="auth-form-wrapper">
+                <h2>Inscription</h2>
+
+                <?php if ($error): ?>
+                    <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+                <?php endif; ?>
+
+                <?php if ($message): ?>
+                    <div class="alert alert-success"><?php echo htmlspecialchars($message); ?></div>
+                <?php endif; ?>
+
+                <form method="POST" action="" class="auth-form">
+                    <div class="form-group">
+                        <label for="first_name">Prénom :</label>
+                        <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($_POST['first_name'] ?? ''); ?>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="last_name">Nom :</label>
+                        <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($_POST['last_name'] ?? ''); ?>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email :</label>
+                        <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Mot de passe :</label>
+                        <input type="password" id="password" name="password" minlength="6" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm_password">Confirmer le mot de passe :</label>
+                        <input type="password" id="confirm_password" name="confirm_password" minlength="6" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">S'inscrire</button>
+                </form>
+
+                <div class="form-footer">
+                    <p>Déjà un compte ? <a href="login.php">Se connecter</a></p>
+                </div>
             </div>
-            
-            <div class="form-group">
-                <label for="last_name">Nom :</label>
-                <input type="text" id="last_name" name="last_name" 
-                       value="<?php echo htmlspecialchars($_POST['last_name'] ?? ''); ?>" 
-                       required>
-            </div>
-            
-            <div class="form-group">
-                <label for="email">Email :</label>
-                <input type="email" id="email" name="email" 
-                       value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" 
-                       required>
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Mot de passe :</label>
-                <input type="password" id="password" name="password" 
-                       minlength="6" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="confirm_password">Confirmer le mot de passe :</label>
-                <input type="password" id="confirm_password" name="confirm_password" 
-                       minlength="6" required>
-            </div>
-            
-            <button type="submit" class="btn">S'inscrire</button>
-        </form>
-        
-        <div class="login-link">
-            <p>Déjà un compte ? <a href="login.php">Se connecter</a></p>
-        </div>
+        </main>
     </div>
 </body>
 </html>

@@ -102,286 +102,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email_login'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        
-        .form-container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-        }
-        
-        .oauth-buttons {
-            margin-bottom: 30px;
-        }
-        
-        .oauth-btn {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: white;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s;
-        }
-        
-        .oauth-btn:hover {
-            background-color: #f8f9fa;
-        }
-        
-        .google-btn {
-            color: #4285f4;
-        }
-        
-        .apple-btn {
-            color: #000;
-        }
-        
-        .discord-btn {
-            color: #5865F2;
-        }
-        
-        .divider {
-            text-align: center;
-            margin: 20px 0;
-            position: relative;
-        }
-        
-        .divider::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background-color: #ddd;
-        }
-        
-        .divider span {
-            background-color: white;
-            padding: 0 15px;
-            color: #666;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: bold;
-        }
-        
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-        
-        input[type="email"]:focus,
-        input[type="password"]:focus {
-            outline: none;
-            border-color: #007bff;
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .btn:hover {
-            background-color: #0056b3;
-        }
-        
-        .error {
-            color: #dc3545;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-        
-        .success {
-            color: #155724;
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-        
-        .register-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        .register-link a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        
-        .register-link a:hover {
-            text-decoration: underline;
-        }
-        /* Style du bouton Google officiel appliqué au bouton personnalisé Supabase */
-        .google-supabase-btn {
-            width: 100%;
-            height: 40px;
-            padding: 0 16px;
-            margin-bottom: 10px;
-            border: 1px solid #dcdcdc;
-            border-radius: 4px;
-            background: #fff;
-            color: #3c4043;
-            font-size: 16px;
-            font-family: Roboto, Arial, sans-serif;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 1px 2px rgba(60,64,67,.08), 0 1.5px 6px rgba(60,64,67,.08);
-            transition: background 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            outline: none;
-        }
-        .google-supabase-btn:hover {
-            background: #f7f8fa;
-            box-shadow: 0 2px 4px rgba(60,64,67,.13);
-        }
-        .google-supabase-btn:active {
-            background: #eee;
-        }
-        .google-supabase-btn img {
-            margin-right: 12px;
-            background: #fff;
-            border-radius: 2px;
-            height: 20px;
-            width: 20px;
-            box-shadow: none;
-        }
-        
-        /* Style du bouton GitHub */
-        .github-supabase-btn {
-            width: 100%;
-            height: 40px;
-            padding: 0 16px;
-            margin-top: 10px; /* Espace entre les boutons */
-            border: 1px solid #333;
-            border-radius: 4px;
-            background: #24292e; /* Couleur foncée de GitHub */
-            color: #fff;
-            font-size: 16px;
-            font-family: Roboto, Arial, sans-serif;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 1.5px 6px rgba(0,0,0,.08);
-            transition: background 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            outline: none;
-        }
-        .github-supabase-btn:hover {
-            background: #333;
-            box-shadow: 0 2px 4px rgba(0,0,0,.13);
-        }
-        .github-supabase-btn:active {
-            background: #000;
-        }
-        .github-supabase-btn img {
-            margin-right: 12px;
-            height: 20px;
-            width: 20px;
-            box-shadow: none;
-            filter: invert(1); /* Rend le logo noir en blanc */
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/styles.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-    <div class="form-container">
-        <h2>Connexion</h2>
-        
-        <?php if ($error): ?>
-            <div class="error"><?php echo htmlspecialchars($error); ?></div>
-        <?php endif; ?>
-        
-        <?php if ($message): ?>
-            <div class="success"><?php echo htmlspecialchars($message); ?></div>
-        <?php endif; ?>
-        
-        <!-- Bouton Google style officiel pour Supabase -->
-        <div class="oauth-buttons">
-            <form method="POST" style="display: block;">
-                <button type="submit" name="google_login" class="google-supabase-btn">
-                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" style="height:20px; vertical-align:middle; margin-right:8px;">
-                    Se connecter avec Google
-                </button>
-            </form>
-            <form method="POST" style="display: block;">
-                <button type="submit" name="github_login" class="github-supabase-btn">
-                    <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub">
-                    Se connecter avec GitHub
-                </button>
-            </form>
-        </div>
-        
-        <div class="divider">
-            <span>ou</span>
-        </div>
-        
-        <!-- Formulaire classique -->
-        <form method="POST">
-            <div class="form-group">
-                <label for="email">Email :</label>
-                <input type="email" id="email" name="email" 
-                       value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" 
-                       required>
+    <div class="page-container">
+        <?php include 'header.php'; ?>
+        <main class="container auth-container">
+            <div class="auth-form-wrapper">
+                <h2>Connexion</h2>
+
+                <?php if ($error): ?>
+                    <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+                <?php endif; ?>
+
+                <?php if ($message): ?>
+                    <div class="alert alert-success"><?php echo htmlspecialchars($message); ?></div>
+                <?php endif; ?>
+
+                <!-- Boutons OAuth -->
+                <div class="oauth-buttons">
+                    <form method="POST" class="oauth-form">
+                        <button type="submit" name="google_login" class="btn-social btn-google">
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="google-icon"><g><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></g></svg>
+                            Se connecter avec Google
+                        </button>
+                    </form>
+                    <form method="POST" class="oauth-form">
+                        <button type="submit" name="github_login" class="btn-social btn-github">
+                            <svg class="github-icon" viewBox="0 0 16 16" version="1.1" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+                            Se connecter avec GitHub
+                        </button>
+                    </form>
+                </div>
+
+                <div class="divider">
+                    <span>ou</span>
+                </div>
+
+                <!-- Formulaire classique -->
+                <form method="POST" class="auth-form">
+                    <div class="form-group">
+                        <label for="email">Email :</label>
+                        <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Mot de passe :</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+
+                    <button type="submit" name="email_login" class="btn btn-primary btn-block">Se connecter</button>
+                </form>
+
+                <div class="form-footer">
+                    <p>Pas encore de compte ? <a href="register.php">S'inscrire</a></p>
+                </div>
             </div>
-            
-            <div class="form-group">
-                <label for="password">Mot de passe :</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            
-            <button type="submit" name="email_login" class="btn">Se connecter</button>
-        </form>
-        
-        <div class="register-link">
-            <p>Pas encore de compte ? <a href="register.php">S'inscrire</a></p>
-        </div>
+        </main>
     </div>
 </body>
 </html>

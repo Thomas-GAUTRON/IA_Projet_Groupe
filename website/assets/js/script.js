@@ -37,6 +37,25 @@ async function buildQuiz() {
       question.textContent = `Q${index + 1}. ${item.question}`;
       block.appendChild(question);
 
+      // Créer le bouton "Question suivante" ici pour qu'il soit accessible
+      // dans l'écouteur d'événement des choix.
+      const btnNext = document.createElement('button');
+      btnNext.className = 'btn';
+      btnNext.textContent = index < data.quiz.length - 1 ? 'Question suivante' : 'Fin du quiz';
+      btnNext.disabled = true;
+      btnNext.style.marginTop = '15px';
+
+      btnNext.addEventListener('click', () => {
+        if (index < data.quiz.length - 1) {
+          currentIndex++;
+          showQuestion(currentIndex);
+        } else {
+          container.innerHTML = `<h2>Quiz terminé !</h2>`;
+          showScore();
+        }
+        if (window.MathJax) MathJax.typesetPromise([container]);
+      });
+
       item.choices.forEach(choice => {
         const btn = document.createElement('div');
         btn.className = 'choice';
@@ -48,9 +67,9 @@ async function buildQuiz() {
 
           if (choice === item.answer) {
             btn.classList.add('correct');
-            score++; // 🎯 bonne réponse = +1
+            score++;
           } else {
-            btn.classList.add('incorrect'); // Ajout : couleur rouge sur la mauvaise réponse
+            btn.classList.add('incorrect');
             const correct = [...all].find(c => c.textContent === item.answer);
             if (correct) correct.classList.add('correct');
           }
@@ -58,8 +77,9 @@ async function buildQuiz() {
           const exp = document.createElement('div');
           exp.className = 'explanation';
           exp.textContent = `💡 ${item.explanation}`;
-          block.appendChild(exp);
+          block.appendChild(exp); // L'explication sera ajoutée ici
 
+          // Le bouton "Suivant" est maintenant activé, et l'explication est visible
           btnNext.disabled = false;
           if (window.MathJax) MathJax.typesetPromise([block]);
         });
@@ -67,23 +87,10 @@ async function buildQuiz() {
         block.appendChild(btn);
       });
 
+      // Ajouter le bloc de question et le bouton "suivant" au conteneur principal
       container.appendChild(block);
+      block.appendChild(btnNext); // Le bouton est dans le bloc de la question
 
-      const btnNext = document.createElement('button');
-      btnNext.textContent = index < data.quiz.length - 1 ? 'Question suivante' : 'Fin du quiz';
-      btnNext.disabled = true;
-      btnNext.style.marginTop = '15px';
-      btnNext.addEventListener('click', () => {
-        if (index < data.quiz.length - 1) {
-          currentIndex++;
-          showQuestion(currentIndex);
-        } else {
-          container.innerHTML = `<h2>Quiz terminé !</h2>`;
-          showScore();
-        }
-        if (window.MathJax) MathJax.typesetPromise([container]);
-      });
-      container.appendChild(btnNext);
       if (window.MathJax) MathJax.typesetPromise([container]);
     }
 
@@ -159,74 +166,6 @@ function generatePdf(quizData) {
   doc.save('quiz.pdf');
 }
 
-function compileLaTeX() {
-  const latexCode = document.getElementById('latex-input').value;
-  const outputDiv = document.getElementById('output');
-
-  try {
-    // Parser basique du LaTeX
-    let htmlContent = latexCode;
-
-    // Nettoyer le début et la fin
-    htmlContent = htmlContent.replace(/\\begin{document}/, '');
-    htmlContent = htmlContent.replace(/\\end{document}/, '');
-
-    // Convertir les sections
-    htmlContent = htmlContent.replace(/\\section\*{([^}]+)}/g, '<h2 class="latex-section">$1</h2>');
-    htmlContent = htmlContent.replace(/\\subsection\*{([^}]+)}/g, '<h3 class="latex-subsection">$1</h2>');
-
-    // Convertir les listes
-    htmlContent = htmlContent.replace(/\\begin{itemize}/g, '<ul class="latex-itemize">');
-    htmlContent = htmlContent.replace(/\\end{itemize}/g, '</ul>');
-    htmlContent = htmlContent.replace(/\\item\s+/g, '<li class="latex-item">');
-
-    // Convertir le texte gras
-    htmlContent = htmlContent.replace(/\\textbf{([^}]+)}/g, '<span class="latex-textbf">$1</span>');
-
-    // Nettoyer les paragraphes vides et ajouter des balises
-    htmlContent = htmlContent.replace(/\n\s*\n/g, '</p><p class="latex-paragraph">');
-    htmlContent = '<p class="latex-paragraph">' + htmlContent + '</p>';
-
-    // Nettoyer les balises vides
-    htmlContent = htmlContent.replace(/<p class="latex-paragraph">\s*<\/p>/g, '');
-    htmlContent = htmlContent.replace(/<p class="latex-paragraph">\s*<div/g, '<div');
-    htmlContent = htmlContent.replace(/<\/div>\s*<\/p>/g, '</div>');
-    htmlContent = htmlContent.replace(/<p class="latex-paragraph">\s*<ul/g, '<ul');
-    htmlContent = htmlContent.replace(/<\/ul>\s*<\/p>/g, '</ul>');
-
-    // Fermer les éléments de liste
-    htmlContent = htmlContent.replace(/<li class="latex-item">([^<]*?)(?=<li|<\/ul>)/g, '<li class="latex-item">$1</li>');
-    htmlContent = htmlContent.replace(/<li class="latex-item">([^<]*?)<\/ul>/g, '<li class="latex-item">$1</li></ul>');
-
-    // Afficher le résultat
-    outputDiv.innerHTML = '<div class="latex-document">' + htmlContent + '</div>';
-    outputDiv.style.display = 'block';
-
-    // Afficher un message de succès
-    const successMsg = document.createElement('div');
-    successMsg.className = 'success';
-    // successMsg.innerHTML = '<strong>✓ Conversion réussie !</strong> Le LaTeX a été converti en HTML. Les formules mathématiques sont rendues par MathJax.';
-    outputDiv.insertBefore(successMsg, outputDiv.firstChild);
-
-    // Re-traiter les mathématiques avec MathJax
-    if (window.MathJax) {
-      MathJax.typesetPromise([outputDiv]).catch(function (err) {
-        console.log('Erreur MathJax: ' + err.message);
-      });
-    }
-
-  } catch (error) {
-    outputDiv.innerHTML = `<div class="error">
-                    <strong>Erreur de conversion:</strong><br>
-                    ${error.message}
-                    <br><br>
-                    <em>Cette conversion basique supporte les commandes LaTeX de base. 
-                    Pour une conversion plus complète, utilisez Pandoc en ligne de commande.</em>
-                </div>`;
-    console.error('Erreur de conversion:', error);
-  }
-}
-
 function downloadQuizPdfFromPython(quizData) {
   fetch('http://127.0.0.1:5000/json_quiz_to_pdf', {
     method: 'POST',
@@ -263,56 +202,51 @@ window.onload = function () {
   checkMathJax();
 };
 
-// ----- Multi-cours -----
+// ----- NOUVELLE GESTION MULTI-COURS -----
 
-window.courseQuizzes = [];
-window.courseResumes = [];
+window.courses = []; // Un seul tableau pour tout gérer
 
-// Si des données initiales sont injectées depuis PHP (cas dashboard)
-if (typeof window.initialQuizArray !== 'undefined' && Array.isArray(window.initialQuizArray)) {
-  window.courseQuizzes = window.initialQuizArray.map(q => {
-    if (typeof q === 'string') {
-      // Nettoyer la chaîne JSON : extraire la partie entre la première { et la dernière }
-      let cleaned = q;
-      const firstBrace = cleaned.indexOf('{');
-      const lastBrace = cleaned.lastIndexOf('}');
-      if (firstBrace !== -1 && lastBrace !== -1) {
-        cleaned = cleaned.substring(firstBrace, lastBrace + 1);
-      }
-      // Dupliquer tout backslash qui n'est pas déjà une séquence d'échappement JSON valide (ex: \d -> \\d)
-      cleaned = cleaned.replace(/\\(?!["\\\/bfnrtu0-9])/g, "\\\\$&");
-      // Échapper les retours à la ligne en \n
-      cleaned = cleaned.replace(/\r?\n/g, "\\n");
-      cleaned = cleaned.replace(/\\\\/g, "\\");
-      try {
-        const obj = JSON.parse(cleaned);
-        if (obj && obj.quiz) return obj;
-        console.warn('Objet quiz invalide', obj);
-        return null;
-      } catch (e) {
-        console.error('JSON parse error', e);
-        return null;
-      }
-    }
-    return q;
-  });
-  // Filtrer les null
-  window.courseQuizzes = window.courseQuizzes.filter(q => q && q.quiz && Array.isArray(q.quiz));
-  window.courseResumes = Array.isArray(window.initialResumeArray) ? window.initialResumeArray.map(r => r) : [];
-  // Cas où il n’y a que des résumés et aucun quiz : créer des objets placeholder
-  if (courseQuizzes.length === 0 && courseResumes.length > 0) {
-    window.courseQuizzes = courseResumes.map((_, idx) => ({
-      courseTitle: (() => {
-        try {
-          const match = courseResumes[idx].match(/section\*\{([^}]+)\}/);
-          return match ? match[1].replace(/\\[a-zA-Z]+/g, '') : `Résumé ${idx + 1}`;
-        } catch (error) {
-          return `Résumé ${idx + 1}`;
-        }
-      })(),
-      quiz: []
-    }));
+// Fonction pour parser et nettoyer le JSON du quiz
+function parseQuizJson(q) {
+  if (typeof q !== 'string') return q;
+  let cleaned = q;
+  const firstBrace = cleaned.indexOf('{');
+  const lastBrace = cleaned.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace !== -1) {
+    cleaned = cleaned.substring(firstBrace, lastBrace + 1);
   }
+  cleaned = cleaned.replace(/\r?\n/g, "\\n").replace(/\\(?!["\\\/bfnrtu0-9])/g, "\\\\$&").replace(/\\\\/g, "\\");
+  try {
+    const obj = JSON.parse(cleaned);
+    return (obj && obj.quiz) ? obj : null;
+  } catch (e) {
+    console.error('Erreur de parsing JSON', e, "sur la chaîne:", q);
+    return null;
+  }
+}
+
+// Si des données initiales sont injectées depuis PHP
+if (typeof window.initialQuizArray !== 'undefined' && Array.isArray(window.initialQuizArray)) {
+  let initialQuizzes = window.initialQuizArray.map(parseQuizJson).filter(q => q);
+  let initialResumes = Array.isArray(window.initialResumeArray) ? window.initialResumeArray : [];
+
+  // Créer une structure de cours unifiée
+  const numCourses = Math.max(initialQuizzes.length, initialResumes.length);
+  for (let i = 0; i < numCourses; i++) {
+    const quiz = initialQuizzes[i] || null;
+    const resume = initialResumes[i] || null;
+    if (quiz || resume) {
+      let title = `Cours ${i + 1}`;
+      if (quiz && quiz.courseTitle) {
+        title = quiz.courseTitle;
+      } else if (resume) {
+        const match = resume.match(/section\*\{([^}]+)\}/);
+        if (match) title = match[1].replace(/\\[a-zA-Z]+/g, '').trim();
+      }
+      window.courses.push({ title: title, quizData: quiz, resumeData: resume });
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     populateCourseSelector();
     loadCourse(0);
@@ -324,48 +258,126 @@ function populateCourseSelector() {
   const sel = document.getElementById('course-select');
   if (!sel) return;
   sel.innerHTML = '';
-  courseQuizzes.forEach((_, idx) => {
+  window.courses.forEach((course, idx) => {
     const opt = document.createElement('option');
     opt.value = idx;
-    opt.textContent = `Cours ${idx + 1}`;
+    opt.textContent = course.title;
     sel.appendChild(opt);
   });
-  if (courseQuizzes.length > 1) {
-    sel.style.display = 'block';
-  }
+  sel.style.display = window.courses.length > 1 ? 'block' : 'none';
   sel.addEventListener('change', () => loadCourse(parseInt(sel.value)));
 }
 
 function loadCourse(index) {
-  if ((index < 0 || index >= courseQuizzes.length)) return;
-  window.quizData = courseQuizzes[index];
-  const hasQuiz = window.quizData && Array.isArray(window.quizData.quiz) && window.quizData.quiz.length;
+    
+  if (index < 0 || index >= window.courses.length) return;;
+  const course = window.courses[index];
 
-  document.getElementById('latex-input').value = courseResumes[index] || '';
+  // Mettre à jour le titre
+  document.getElementById('course-title').textContent = course.title;
 
-  // Reconstruire l'interface
-  if (hasQuiz && typeof buildQuiz === 'function') {
-    document.getElementById('quiz-pane').classList.remove('hidden');
-    buildQuiz();
+  // Gérer le quiz - charger les données sans gérer l'affichage du pane
+  if (course.quizData && course.quizData.quiz && course.quizData.quiz.length > 0) {
+    window.quizData = course.quizData;
+    if (typeof buildQuiz === 'function') buildQuiz();
+  } else {
+    document.getElementById('quiz-container').innerHTML = '<p>Aucun quiz disponible pour ce cours.</p>';
   }
 
-  if (typeof generatePdfFromLatex === 'function') generatePdfFromLatex();
-  // if (typeof compileLaTeX === 'function') compileLaTeX();
+  try{
+  // Gérer le résumé - charger les données sans gérer l'affichage du pane
+  if (course.resumeData) {
+    document.getElementById('latex-input').value = course.resumeData;
+    if (typeof generatePdfFromLatex === 'function') generatePdfFromLatex();
+  } else {
+    // Hiding the iframe container is fine, as it's not a main pane
+    document.getElementById('pdf-frame').style.display = 'none';
+    document.getElementById('pdf-container').innerHTML = '<p>Aucun résumé disponible pour ce cours.</p>';
+  }
+  }
+  catch(e){
+    console.error("Erreur lors de la génération du résumé : ", e);
+  }
+      
+  // Gérer l'état des onglets et des panneaux
+  updateTabsAndPanesForCourse(course);
+}
 
-  document.getElementById('course-title').textContent = quizData?.courseTitle || `Cours ${index + 1}`;
+
+function updateTabsAndPanesForCourse(course) {
+    const hasQuiz = course && course.quizData && course.quizData.quiz.length > 0;
+    const hasResume = course && course.resumeData;
+
+    const quizTab = document.querySelector('.tab-button[data-view="quiz"]');
+    const resumeTab = document.querySelector('.tab-button[data-view="resume"]');
+    const bothTab = document.querySelector('.tab-button[data-view="both"]');
+
+    // Mettre à jour la visibilité des boutons d'onglets
+    if (quizTab) quizTab.style.display = (hasQuiz && hasResume) ? 'inline-block' : 'none';
+    if (resumeTab) resumeTab.style.display = (hasQuiz && hasResume) ? 'inline-block' : 'none';
+    if (bothTab) bothTab.style.display = (hasQuiz && hasResume) ? 'inline-block' : 'none';
+
+    // Définir l'onglet actif par défaut
+    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+
+    let activeTab;
+    if (hasQuiz && hasResume) {
+        activeTab = bothTab;
+    } else if (hasQuiz) {
+        activeTab = quizTab;
+    } else if (hasResume) {
+        activeTab = resumeTab;
+    }
+
+    if (activeTab) {
+        activeTab.classList.add('active');
+        // Mettre à jour les panneaux en fonction de l'onglet actif
+        updatePanesVisibility({ target: activeTab });
+    }
+}
+
+function updatePanesVisibility(event) {
+  // Récupérer le bouton cliqué
+  const clickedButton = event.target;
+
+  // Retirer la classe 'active' de tous les boutons
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.classList.remove('active');
+  });
+
+  // Ajouter la classe 'active' au bouton cliqué
+  clickedButton.classList.add('active');
+
+  const activeView = clickedButton.dataset.view;
+
+  const courseIndex = parseInt(document.getElementById('course-select').value) || 0;
+  if (courseIndex >= window.courses.length) return;
+  const currentCourse = window.courses[courseIndex];
+  const hasQuiz = currentCourse && currentCourse.quizData && currentCourse.quizData.quiz.length > 0;
+  const hasResume = currentCourse && currentCourse.resumeData;
+
+  const quizPane = document.getElementById('quiz-pane');
+  const resumePane = document.getElementById('resume-pane');
+
+  if (quizPane) quizPane.style.display = (activeView === 'quiz' || activeView === 'both') && hasQuiz ? 'block' : 'none';
+  if (resumePane) resumePane.style.display = (activeView === 'resume' || activeView === 'both') && hasResume ? 'block' : 'none';
 }
 
 // Génère et affiche le PDF du résumé dans l’iframe
 function generatePdfFromLatex() {
   const latexCode = document.getElementById('latex-input').value;
   if (!latexCode.trim()) return;
-
+  try {
+    title = quizData?.courseTitle || "Résumé";
+  } catch (e) {
+    title = "Résumé";
+  }
   fetch('http://127.0.0.1:5000/latex_to_pdf', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       latex: latexCode,
-      title: quizData?.courseTitle || "Résumé"
+      title: title
     })
   })
     .then(res => res.json())
