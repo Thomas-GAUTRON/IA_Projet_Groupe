@@ -1,19 +1,19 @@
 /* === VARIABLES & RESET === */
 :root {
-    --primary-color: #007bff;
-    --primary-hover: #0056b3;
-    --secondary-color: #6c757d;
-    --secondary-hover: #5a6268;
+    --primary-color: #8752b8;
+    --primary-hover: #4b1369;
+    --secondary-color: #4b1369;
+    --secondary-hover: #380e4f;
     --success-color: #28a745;
     --danger-color: #dc3545;
-    --light-color: #f8f9fa;
-    --dark-color: #343a40;
-    --text-color: #212529;
-    --bg-color: #ffffff;
-    --border-color: #dee2e6;
+    --light-color: #d6c2f5;
+    --dark-color: #15110e;
+    --text-color: #15110e;
+    --bg-color: #fdf6ff;
+    --border-color: #d6c2f5;
     --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     --border-radius: 0.375rem;
-    --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    --box-shadow: 0 0.5rem 1rem rgba(21, 17, 14, 0.15);
     --transition: all 0.2s ease-in-out;
 }
 
@@ -278,15 +278,15 @@ input:checked+.slider:before {
 }
 
 .btn-github {
-    background-color: #24292e;
-    color: #fff;
+    background-color: var(--dark-color);
+    color: var(--bg-color);
+    border-color: var(--dark-color);
 }
-
 .btn-github:hover {
-    background-color: #333;
-    color: #fff;
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: var(--bg-color);
 }
-
 .btn-github .github-icon {
     width: 20px;
     height: 20px;
