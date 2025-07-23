@@ -452,7 +452,7 @@ input:checked+.slider:before {
     transform: translateX(5px);
 }
 
-/* --- Quizz Page --- */
+/* --- Quiz Page --- */
 .course-selector {
     display: none;
     /* Masqué par défaut, affiché par JS si nécessaire */

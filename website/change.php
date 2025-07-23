@@ -11,7 +11,7 @@ if (!$id || !$type) {
 }
 
 // Autoriser seulement certains types pour éviter abus
-$allowedTypes = ['quizz', 'resume'];
+$allowedTypes = ['quiz', 'resume'];
 if (!in_array($type, $allowedTypes)) {
     echo "Type invalide.";
     exit;
@@ -19,10 +19,10 @@ if (!in_array($type, $allowedTypes)) {
 
 // Exemple de logique selon le type demandé
 switch ($type) {
-    case 'quizz':
+    case 'quiz':
         // Ici, tu peux inclure ou générer le quiz correspondant à $id
         $_SESSION['reponse'] = $id;
-        header("Location: quizz");
+        header("Location: quiz");
         // Exemple : include "quiz_generator.php"; ou récupération BD, etc.
         break;
 

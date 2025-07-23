@@ -24,7 +24,7 @@ include 'begin_php.php';
                     <p><?php echo t('hello'); ?>, <b><?php echo htmlspecialchars($_SESSION['user_email']); ?></b> !</p>
                     <div class="menu">
                         <a href="dashboard.php" class="btn"><?php echo t('nav_dashboard'); ?></a>
-                        <a href="quizz.php" class="btn"><?php echo t('nav_courses'); ?></a>
+                        <a href="quiz.php" class="btn"><?php echo t('nav_courses'); ?></a>
                         <a href="form.php" class="btn"><?php echo t('add_pdf_button'); ?></a>
                     </div>
                 <?php else: ?>

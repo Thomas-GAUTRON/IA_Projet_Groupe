@@ -9,14 +9,14 @@ $translations = [
     'nav_login' => "Login",
 
     // --- Index Page ---
-    'home_title' => "Home | AI Project Group",
-    'main_title' => "AI Project Group",
-    'subtitle' => "Your platform for analyzing and quizzing PDF documents, powered by AI.",
+    'home_title' => "Home | AcademIA",
+    'main_title' => "AcademIA",
+    'subtitle' => "Your platform for analyzing and quizing PDF documents, powered by AI.",
     'hello' => "Hello",
     'add_pdf_button' => "Add a PDF",
     'register_button' => "Create an account",
     'concept_title' => "The Concept",
-    'concept_text' => "AI&nbsp;Project&nbsp;Group is an educational platform that harnesses the power of artificial intelligence—notably <strong>Google&nbsp;Gemini&nbsp;2.5&nbsp;Flash</strong>—to transform your PDFs into interactive content: elegant LaTeX summaries and graded quizzes. The goal? To help you assimilate, revise, and share your scientific documents, courses, or research papers more effectively.",
+    'concept_text' => "AcademIA is an educational platform that harnesses the power of artificial intelligence—notably <strong>Google&nbsp;Gemini&nbsp;2.5&nbsp;Flash</strong>—to transform your PDFs into interactive content: elegant LaTeX summaries and graded quizes. The goal? To help you assimilate, revise, and share your scientific documents, courses, or research papers more effectively.",
     'feature1_title' => "📄 Multi-PDF Upload",
     'feature1_text' => "Drag and drop multiple files and let the backend process them in parallel.",
     'feature2_title' => "🧠 LaTeX Summary",
@@ -28,7 +28,7 @@ $translations = [
     'start_button' => "Get Started →",
 
     // --- Login Page ---
-    'login_title' => "Login | AI Project Group",
+    'login_title' => "Login | AcademIA",
     'login_heading' => "Login",
     'login_with_google' => "Log in with Google",
     'login_with_github' => "Log in with GitHub",
@@ -40,7 +40,7 @@ $translations = [
     'login_password' => "Password",
 
     // --- Register Page ---
-    'register_title_full' => "Sign Up | AI Project Group",
+    'register_title_full' => "Sign Up | AcademIA",
     'register_heading' => "Sign Up",
     'register_with_google' => "Sign up with Google",
     'register_with_github' => "Sign up with GitHub",
@@ -55,7 +55,7 @@ $translations = [
     'register_confirm_password' => "Confirm password",
 
     // --- Form Page ---
-    'form_title_full' => "Generate | AI Project Group",
+    'form_title_full' => "Generate | AcademIA",
     'form_heading' => "Generate new content",
     'form_label_select_files' => "Select one or more PDF files:",
     'form_label_choose_type' => "Choose the type of content to generate:",
@@ -73,16 +73,16 @@ $translations = [
     'loader_processing' => "Processing, please wait...",
 
     // --- Dashboard Page ---
-    'dashboard_title_full' => "Dashboard | AI Project Group",
+    'dashboard_title_full' => "Dashboard | AcademIA",
     'dashboard_heading' => "Your Dashboard",
     'dashboard_greeting' => "Hello",
     'dashboard_intro' => "Find all your analyzed documents here.",
-    'courses_section_title' => "My Courses",
-    'course_link' => "Course",
+    'courses_section_title' => "My Documents",
+    'course_link' => "Documents",
     'no_courses' => "You haven't analyzed any documents yet.",
 
     // --- Quiz Page ---
-    'quiz_title_full' => "Dynamic Quiz | AI Project Group",
+    'quiz_title_full' => "Dynamic Quiz | AcademIA",
     'quiz_loading_course' => "Loading course...",
     'tab_quiz' => "Quiz",
     'tab_resume' => "Summary",

@@ -227,13 +227,13 @@ function parseQuizJson(q) {
 
 // Si des données initiales sont injectées depuis PHP
 if (typeof window.initialQuizArray !== 'undefined' && Array.isArray(window.initialQuizArray)) {
-  let initialQuizzes = window.initialQuizArray.map(parseQuizJson).filter(q => q);
+  let initialQuizes = window.initialQuizArray.map(parseQuizJson).filter(q => q);
   let initialResumes = Array.isArray(window.initialResumeArray) ? window.initialResumeArray : [];
 
   // Créer une structure de cours unifiée
-  const numCourses = Math.max(initialQuizzes.length, initialResumes.length);
+  const numCourses = Math.max(initialQuizes.length, initialResumes.length);
   for (let i = 0; i < numCourses; i++) {
-    const quiz = initialQuizzes[i] || null;
+    const quiz = initialQuizes[i] || null;
     const resume = initialResumes[i] || null;
     if (quiz || resume) {
       let title = `Cours ${i + 1}`;
