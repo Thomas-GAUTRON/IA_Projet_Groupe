@@ -1,0 +1,88 @@
+<?php
+$translations = [
+    // --- Navigation ---
+    'nav_home' => "Accueil",
+    'nav_generate' => "Générer",
+    'nav_courses' => "Mes cours",
+    'nav_dashboard' => "Dashboard",
+    'nav_logout' => "Déconnexion",
+    'nav_login' => "Connexion",
+
+    // --- Index Page ---
+    'home_title' => "Accueil | IA Projet Groupe",
+    'main_title' => "IA Projet Groupe",
+    'subtitle' => "Votre plateforme d’analyse et de quiz de documents PDF, propulsée par l'IA.",
+    'hello' => "Bonjour",
+    'add_pdf_button' => "Ajouter un PDF",
+    'register_button' => "Créer un compte",
+    'concept_title' => "Le concept",
+    'concept_text' => "IA&nbsp;Projet&nbsp;Groupe est une plateforme pédagogique qui exploite la puissance de l’intelligence artificielle&nbsp;— notamment <strong>Google&nbsp;Gemini&nbsp;2.5&nbsp;Flash</strong>&nbsp;— pour transformer vos PDF en contenus interactifs&nbsp;: résumés LaTeX élégants et quiz corrigés. L’objectif&nbsp;? Vous aider à assimiler, réviser et partager plus efficacement vos documents scientifiques, cours ou travaux de recherche.",
+    'feature1_title' => "📄 Upload multi-PDF",
+    'feature1_text' => "Glissez-déposez plusieurs fichiers et laissez le backend les traiter en parallèle.",
+    'feature2_title' => "🧠 Résumé LaTeX",
+    'feature2_text' => "Un condensé généré en LaTeX, prêt à être compilé, avec les équations intactes.",
+    'feature3_title' => "❓ Quiz interactif",
+    'feature3_text' => "Questions à choix multiples corrigées instantanément avec explications détaillées.",
+    'feature4_title' => "☁️ Sauvegarde Supabase",
+    'feature4_text' => "Retrouvez tous vos résultats dans le Dashboard, disponibles à tout moment.",
+    'start_button' => "Commencer →",
+
+    // --- Login Page ---
+    'login_title' => "Connexion | IA Projet Groupe",
+    'login_heading' => "Connexion",
+    'login_with_google' => "Se connecter avec Google",
+    'login_with_github' => "Se connecter avec GitHub",
+    'login_or' => "ou",
+    'login_button' => "Se connecter",
+    'login_no_account' => "Pas encore de compte ?",
+    'login_signup_link' => "S'inscrire",
+
+    // --- Register Page ---
+    'register_title_full' => "Inscription | IA Projet Groupe",
+    'register_heading' => "Inscription",
+    'register_with_google' => "S'inscrire avec Google",
+    'register_with_github' => "S'inscrire avec GitHub",
+    'register_or' => "ou",
+    'register_button_submit' => "S'inscrire",
+    'register_have_account' => "Déjà un compte ?",
+    'register_login_link' => "Se connecter",
+
+    // --- Form Page ---
+    'form_title_full' => "Générer | IA Projet Groupe",
+    'form_heading' => "Générer un nouveau contenu",
+    'form_label_select_files' => "Sélectionnez un ou plusieurs fichiers PDF :",
+    'form_label_choose_type' => "Choisissez le type de contenu à générer :",
+    'form_option_summary_only' => "Résumé seulement",
+    'form_option_quiz_only' => "Quiz seulement",
+    'form_option_summary_quiz_source' => "Résumé & Quiz (depuis la source)",
+    'form_option_summary_quiz_summary' => "Résumé & Quiz (depuis le résumé)",
+    'form_label_summary_mode' => "Mode de résumé :",
+    'toggle_professional' => "Professionnel",
+    'toggle_educational' => "Pédagogique",
+    'form_label_generation_scope' => "Portée de la génération :",
+    'radio_single_result' => "Un seul résultat pour tous les documents",
+    'radio_multiple_result' => "Un résultat pour chaque document",
+    'form_submit' => "Lancer la génération",
+    'loader_processing' => "Traitement en cours, veuillez patienter...",
+
+    // --- Dashboard Page ---
+    'dashboard_title_full' => "Dashboard | IA Projet Groupe",
+    'dashboard_heading' => "Votre Dashboard",
+    'dashboard_greeting' => "Bonjour",  
+    'dashboard_intro' => "Retrouvez ici vos documents analysés.",
+    'courses_section_title' => "Mes cours",
+    'course_link' => "Cours",
+    'no_courses' => "Vous n'avez pas encore analysé de documents.",
+
+    // --- Quiz Page ---
+    'quiz_title_full' => "Quiz Dynamique | IA Projet Groupe",
+    'quiz_loading_course' => "Chargement du cours...",
+    'tab_quiz' => "Quiz",
+    'tab_resume' => "Résumé",
+    'tab_both' => "Les deux",
+    'download_pdf' => "Télécharger en PDF",
+    'download_pdf_resume' => "Télécharger en PDF",
+    'loader_preparing' => "Préparation...",
+    'error_no_quiz' => "Aucun quiz à charger. Veuillez en générer un nouveau.",
+    'error_processing' => "Une erreur est survenue lors du traitement :",
+]; 

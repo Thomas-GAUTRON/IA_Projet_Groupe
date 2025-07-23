@@ -70,11 +70,11 @@ if (!$task_id) {
 } ?>
 
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?php echo htmlspecialchars($_SESSION['lang']); ?>">
 
 <head>
   <meta charset="UTF-8" />
-  <title>Quiz Dynamique</title>
+  <title><?php echo t('quiz_title_full'); ?></title>
   <link rel="stylesheet" href="assets/css/styles.css" />
   <!-- Scripts -->
   <!-- MathJax Configuration -->
@@ -128,30 +128,30 @@ if (!$task_id) {
         <?php include 'header.php'; ?>
 
         <main class="container quiz-layout">
-            <h1 id="course-title">Chargement du cours...</h1>
+            <h1 id="course-title"><?php echo t('quiz_loading_course'); ?></h1>
             <select id="course-select" class="course-selector"></select>
 
             <!-- Onglets -->
             <div class="tabs">
-                <button onclick="updatePanesVisibility(event)" class="tab-button" data-view="quiz">Quiz</button>
-                <button onclick="updatePanesVisibility(event)" class="tab-button" data-view="resume">Résumé</button>
-                <button onclick="updatePanesVisibility(event)" class="tab-button active" data-view="both">Les deux</button>
+                <button onclick="updatePanesVisibility(event)" class="tab-button" data-view="quiz"><?php echo t('tab_quiz'); ?></button>
+                <button onclick="updatePanesVisibility(event)" class="tab-button" data-view="resume"><?php echo t('tab_resume'); ?></button>
+                <button onclick="updatePanesVisibility(event)" class="tab-button active" data-view="both"><?php echo t('tab_both'); ?></button>
             </div>
 
             <!-- Contenu -->
             <div class="content-container">
                 <div class="pane" id="quiz-pane">
                     <div class="pane-header">
-                        <h2>Quiz</h2>
-                        <button id="download-pdf" class="btn btn-sm">Télécharger en PDF</button>
+                        <h2><?php echo t('tab_quiz'); ?></h2>
+                        <button id="download-pdf" class="btn btn-sm"><?php echo t('download_pdf'); ?></button>
                     </div>
                     <div id="quiz-container"></div>
                 </div>
 
                 <div class="pane" id="resume-pane">
                     <div class="pane-header">
-                        <h2>Résumé</h2>
-                        <button id="download-pdf-resume" class="btn btn-sm" onclick="downloadResumePdf()">Télécharger en PDF</button>
+                        <h2><?php echo t('tab_resume'); ?></h2>
+                        <button id="download-pdf-resume" class="btn btn-sm" onclick="downloadResumePdf()"><?php echo t('download_pdf_resume'); ?></button>
                     </div>
                     <iframe id="pdf-frame" class="pdf-iframe"></iframe>
                 </div>
@@ -161,7 +161,7 @@ if (!$task_id) {
 
     <div id="loader" class="loader-overlay">
         <div class="spinner"></div>
-        <p id="loader-msg" class="loader-text">Préparation...</p>
+        <p id="loader-msg" class="loader-text"><?php echo t('loader_preparing'); ?></p>
         <progress id="loader-bar" class="loader-bar" value="0" max="100"></progress>
     </div>
     <div id="error-message" class="error-banner"></div>
@@ -202,7 +202,7 @@ if (!$task_id) {
                             clearInterval(interval);
                             localStorage.removeItem('current_task_id');
                             loader.style.display = 'none';
-                            errorMessage.textContent = 'Une erreur est survenue lors du traitement : ' + data.error;
+                            errorMessage.textContent = '<?php echo t('error_processing'); ?> ' + data.error;
                             errorMessage.style.display = 'block';
                         }
                         // Mise à jour du message/progression
@@ -217,14 +217,14 @@ if (!$task_id) {
                     .catch(err => {
                         clearInterval(interval);
                         loader.style.display = 'none';
-                        errorMessage.textContent = 'Erreur de communication avec le serveur de traitement.';
+                        errorMessage.textContent = '<?php echo t('error_processing'); ?>';
                         errorMessage.style.display = 'block';
                     });
             }, 5000); // Interroge toutes les 5 secondes
         } else {
             // Cas 3: Aucune donnée et aucun ID de tâche
             loader.style.display = 'none';
-            errorMessage.textContent = "Aucun quiz à charger. Veuillez en générer un nouveau.";
+            errorMessage.textContent = "<?php echo t('error_no_quiz'); ?>";
             errorMessage.style.display = 'block';
         }
 
@@ -265,7 +265,7 @@ if (!$task_id) {
                 const resume = resumeContent ? resumeContent.match(/\\begin{document}(.*?)\\end{document}/s)?.[1].trim() : null;
 
                 if (quiz || resume) {
-                    let title = `Cours ${i + 1}`;
+                    let title = "<?php echo t('course_link'); ?> " + (i + 1);
                     if (quiz && quiz.courseTitle) {
                         title = quiz.courseTitle;
                     } else if (resume) {

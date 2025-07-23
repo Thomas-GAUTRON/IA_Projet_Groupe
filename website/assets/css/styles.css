@@ -50,9 +50,48 @@ body {
 
 .main-nav {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* Left align, right group pousse avec margin-left:auto */
     align-items: center;
     gap: 2rem;
+}
+
+/* Groupes de navigation */
+.nav-left,
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-center {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Décalage du sélecteur de langue */
+.lang-form {
+    margin-left: 1rem;
+}
+
+.nav-right {
+    margin-left: auto; /* Pousse à droite */
+}
+
+/* Sélecteur de langue */
+.lang-select {
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    border: 1px solid var(--light-color);
+    border-radius: var(--border-radius);
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+}
+
+.lang-select:focus {
+    outline: none;
 }
 
 .nav-link {

@@ -1,5 +1,42 @@
 <?php
 session_start();
+
+// === Language Management ===
+// 1. Set default language if not set
+if (!isset($_SESSION['lang'])) {
+    $_SESSION['lang'] = 'en'; // Anglais par défaut
+}
+
+// 2. Handlstyle="text-align:right; e language change
+if (isset($_GET['lang'])) {
+    $allowed_langs = ['fr', 'en', 'hr', 'mk'];
+    if (in_array($_GET['lang'], $allowed_langs)) {
+        $_SESSION['lang'] = $_GET['lang'];
+    }
+    // Redirigestyle="text-align:right; r pour nettoyer l'URL
+    header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
+    exit;
+}
+
+// 3. Load the language file
+$lang_file = __DIR__ . '/lang/' . $_SESSION['lang'] . '.php';
+if (file_exists($lang_file)) {
+    require_once($lang_file);
+} else {
+    // Fallback to French if file not found
+    require_once __DIR__ . '/lang/fr.php';
+}
+
+// 4. Translation helper function
+function t($key) {
+    global $translations;
+    return $translations[$key] ?? $key; // Retourne la clé si la traduction n'est pas trouvée
+}
+// === End Language Management ===
+
+
+// Récupération de la configuration (à adapter selon votre méthode)
+$configFile = __DIR__ . '/../config.env';
 $config = parse_ini_file('../.env');
 
 function afficher_etat_connexion()

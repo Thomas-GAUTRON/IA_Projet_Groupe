@@ -1,0 +1,88 @@
+<?php
+$translations = [
+    // --- Navigation ---
+    'nav_home' => "Home",
+    'nav_generate' => "Generate",
+    'nav_courses' => "My Courses",
+    'nav_dashboard' => "Dashboard",
+    'nav_logout' => "Logout",
+    'nav_login' => "Login",
+
+    // --- Index Page ---
+    'home_title' => "Home | AI Project Group",
+    'main_title' => "AI Project Group",
+    'subtitle' => "Your platform for analyzing and quizzing PDF documents, powered by AI.",
+    'hello' => "Hello",
+    'add_pdf_button' => "Add a PDF",
+    'register_button' => "Create an account",
+    'concept_title' => "The Concept",
+    'concept_text' => "AI&nbsp;Project&nbsp;Group is an educational platform that harnesses the power of artificial intelligence—notably <strong>Google&nbsp;Gemini&nbsp;2.5&nbsp;Flash</strong>—to transform your PDFs into interactive content: elegant LaTeX summaries and graded quizzes. The goal? To help you assimilate, revise, and share your scientific documents, courses, or research papers more effectively.",
+    'feature1_title' => "📄 Multi-PDF Upload",
+    'feature1_text' => "Drag and drop multiple files and let the backend process them in parallel.",
+    'feature2_title' => "🧠 LaTeX Summary",
+    'feature2_text' => "A generated summary in LaTeX, ready to be compiled, with equations intact.",
+    'feature3_title' => "❓ Interactive Quiz",
+    'feature3_text' => "Multiple-choice questions corrected instantly with detailed explanations.",
+    'feature4_title' => "☁️ Supabase Backup",
+    'feature4_text' => "Find all your results in the Dashboard, available at any time.",
+    'start_button' => "Get Started →",
+
+    // --- Login Page ---
+    'login_title' => "Login | AI Project Group",
+    'login_heading' => "Login",
+    'login_with_google' => "Log in with Google",
+    'login_with_github' => "Log in with GitHub",
+    'login_or' => "or",
+    'login_button' => "Log in",
+    'login_no_account' => "Don't have an account yet?",
+    'login_signup_link' => "Sign up",
+
+    // --- Register Page ---
+    'register_title_full' => "Sign Up | AI Project Group",
+    'register_heading' => "Sign Up",
+    'register_with_google' => "Sign up with Google",
+    'register_with_github' => "Sign up with GitHub",
+    'register_or' => "or",
+    'register_button_submit' => "Sign up",
+    'register_have_account' => "Already have an account?",
+    'register_login_link' => "Log in",
+
+    // --- Form Page ---
+    'form_title_full' => "Generate | AI Project Group",
+    'form_heading' => "Generate new content",
+    'form_label_select_files' => "Select one or more PDF files:",
+    'form_label_choose_type' => "Choose the type of content to generate:",
+    'form_option_summary_only' => "Summary only",
+    'form_option_quiz_only' => "Quiz only",
+    'form_option_summary_quiz_source' => "Summary & Quiz (from source)",
+    'form_option_summary_quiz_summary' => "Summary & Quiz (from summary)",
+    'form_label_summary_mode' => "Summary mode:",
+    'toggle_professional' => "Professional",
+    'toggle_educational' => "Educational",
+    'form_label_generation_scope' => "Generation scope:",
+    'radio_single_result' => "Single result for all documents",
+    'radio_multiple_result' => "One result per document",
+    'form_submit' => "Start generation",
+    'loader_processing' => "Processing, please wait...",
+
+    // --- Dashboard Page ---
+    'dashboard_title_full' => "Dashboard | AI Project Group",
+    'dashboard_heading' => "Your Dashboard",
+    'dashboard_greeting' => "Hello",
+    'dashboard_intro' => "Find all your analyzed documents here.",
+    'courses_section_title' => "My Courses",
+    'course_link' => "Course",
+    'no_courses' => "You haven't analyzed any documents yet.",
+
+    // --- Quiz Page ---
+    'quiz_title_full' => "Dynamic Quiz | AI Project Group",
+    'quiz_loading_course' => "Loading course...",
+    'tab_quiz' => "Quiz",
+    'tab_resume' => "Summary",
+    'tab_both' => "Both",
+    'download_pdf' => "Download as PDF",
+    'download_pdf_resume' => "Download as PDF",
+    'loader_preparing' => "Preparing...",
+    'error_no_quiz' => "No quiz to load. Please generate a new one.",
+    'error_processing' => "An error occurred during processing:",
+]; 

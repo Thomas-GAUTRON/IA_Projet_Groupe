@@ -49,11 +49,11 @@ if (is_array($data)) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?php echo htmlspecialchars($_SESSION['lang']); ?>">
 
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard | IA Projet Groupe</title>
+    <title><?php echo t('dashboard_title_full'); ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="assets/css/styles.css">
 
@@ -64,23 +64,23 @@ if (is_array($data)) {
         <?php include 'header.php'; ?>
         <main class="container">
             <div class="dashboard-header">
-                <h1>Votre Dashboard</h1>
-                <p>Bonjour, <b><?php echo htmlspecialchars($_SESSION['user_email']); ?></b> ! Retrouvez ici vos documents analysés.</p>
+                <h1><?php echo t('dashboard_heading'); ?></h1>
+                <p><?php echo t('dashboard_greeting'); ?>, <b><?php echo htmlspecialchars($_SESSION['user_email']); ?></b> ! <?php echo t('dashboard_intro'); ?></p>
             </div>
 
             <section class="courses-list">
-                <h2>Mes cours</h2>
+                <h2><?php echo t('courses_section_title'); ?></h2>
                 <?php
                 if (isset($uniqueIds) && !empty($uniqueIds)) {
                     echo '<ul class="course-items">';
                     $i = 1;
                     foreach ($uniqueIds as $safeid) {
-                        echo "<li><a href=\"change.php?id=$safeid&amp;type=quizz\" class=\"course-link\">Cours $i</a></li>";
+                        echo "<li><a href=\"change.php?id=$safeid&amp;type=quizz\" class=\"course-link\">" . t('course_link') . " $i</a></li>";
                         $i++;
                     }
                     echo '</ul>';
                 } else {
-                    echo '<p class="no-courses">Vous n\'avez pas encore analysé de documents.</p>';
+                    echo '<p class="no-courses">' . t('no_courses') . '</p>';
                 }
                 ?>
             </section>

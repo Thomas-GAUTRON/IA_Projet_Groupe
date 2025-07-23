@@ -6,10 +6,10 @@ if (!isset($_SESSION['access_token'])) {
 ?>
 
 <!doctype html>
-<html>
+<html lang="<?php echo htmlspecialchars($_SESSION['lang']); ?>">
 
 <head>
-    <title>Upload PDF (via PHP vers Flask)</title>
+    <title><?php echo t('form_title_full'); ?></title>
     <link rel="stylesheet" href="assets/css/styles.css" />
 
 </head>
@@ -18,56 +18,56 @@ if (!isset($_SESSION['access_token'])) {
     <div class="page-container">
         <?php include 'header.php'; ?>
         <main class="container">
-            <h1>Générer un nouveau contenu</h1>
+            <h1><?php echo t('form_heading'); ?></h1>
             <form action="load.php" method="post" enctype="multipart/form-data" class="upload-form">
                 <div class="form-group">
-                    <label for="files">Sélectionnez un ou plusieurs fichiers PDF :</label>
+                    <label for="files"><?php echo t('form_label_select_files'); ?></label>
                     <input type="file" name="files[]" id="files" multiple required accept=".pdf">
                 </div>
 
                 <div class="form-group">
-                    <label for="option">Choisissez le type de contenu à générer :</label>
+                    <label for="option"><?php echo t('form_label_choose_type'); ?></label>
                     <select name="option" id="option" required>
-                        <option value="1">Résumé seulement</option>
-                        <option value="2">Quiz seulement</option>
-                        <option value="3">Résumé & Quiz (depuis la source)</option>
-                        <option value="4">Résumé & Quiz (depuis le résumé)</option>
+                        <option value="1"><?php echo t('form_option_summary_only'); ?></option>
+                        <option value="2"><?php echo t('form_option_quiz_only'); ?></option>
+                        <option value="3"><?php echo t('form_option_summary_quiz_source'); ?></option>
+                        <option value="4"><?php echo t('form_option_summary_quiz_summary'); ?></option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label>Mode de résumé :</label>
+                    <label><?php echo t('form_label_summary_mode'); ?></label>
                     <div class="toggle-group">
-                        <span class="toggle-label">Professionnel</span>
+                        <span class="toggle-label"><?php echo t('toggle_professional'); ?></span>
                         <label class="switch">
                             <input type="checkbox" name="mode" id="mode-toggle" value="educational">
                             <span class="slider round"></span>
                         </label>
-                        <span class="toggle-label">Pédagogique</span>
+                        <span class="toggle-label"><?php echo t('toggle_educational'); ?></span>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Portée de la génération :</label>
+                    <label><?php echo t('form_label_generation_scope'); ?></label>
                     <div class="radio-group">
                         <label class="radio-option">
                             <input type="radio" name="modifier" value="sngl" checked>
-                            Un seul résultat pour tous les documents
+                            <?php echo t('radio_single_result'); ?>
                         </label>
                         <label class="radio-option">
                             <input type="radio" name="modifier" value="mtpl">
-                            Un résultat pour chaque document
+                            <?php echo t('radio_multiple_result'); ?>
                         </label>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary" id="submit-btn">Lancer la génération</button>
+                <button type="submit" class="btn btn-primary" id="submit-btn"><?php echo t('form_submit'); ?></button>
             </form>
 
             <div id="loader" class="loader-overlay" style="display:none;">
                 <div class="loader-content">
                     <div class="spinner"></div>
-                    <p class="loader-text">Traitement en cours, veuillez patienter...</p>
+                    <p class="loader-text"><?php echo t('loader_processing'); ?></p>
                 </div>
             </div>
         </main>

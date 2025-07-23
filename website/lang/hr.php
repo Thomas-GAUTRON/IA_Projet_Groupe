@@ -1,0 +1,88 @@
+<?php
+$translations = [
+    // --- Navigation ---
+    'nav_home' => "Početna",
+    'nav_generate' => "Generiraj",
+    'nav_courses' => "Moji tečajevi",
+    'nav_dashboard' => "Nadzorna ploča",
+    'nav_logout' => "Odjava",
+    'nav_login' => "Prijava",
+
+    // --- Index Page ---
+    'home_title' => "Početna | AI Projekt Grupa",
+    'main_title' => "AI Projekt Grupa",
+    'subtitle' => "Vaša platforma za analizu i kviz PDF dokumenata pokretana umjetnom inteligencijom.",
+    'hello' => "Pozdrav",
+    'add_pdf_button' => "Dodaj PDF",
+    'register_button' => "Kreiraj račun",
+    'concept_title' => "Koncept",
+    'concept_text' => "AI&nbsp;Projekt&nbsp;Grupa je obrazovna platforma koja koristi snagu umjetne inteligencije — posebno <strong>Google&nbsp;Gemini&nbsp;2.5&nbsp;Flash</strong> — za pretvaranje vaših PDF-ova u interaktivni sadržaj: elegantne LaTeX sažetke i ocijenjene kvizove.",
+    'feature1_title' => "📄 Više-PDF Upload",
+    'feature1_text' => "Povucite i ispustite više datoteka dok backend obrađuje paralelno.",
+    'feature2_title' => "🧠 LaTeX Sažetak",
+    'feature2_text' => "Generirani sažetak u LaTeXu, spreman za kompilaciju, s očuvanim jednadžbama.",
+    'feature3_title' => "❓ Interaktivni kviz",
+    'feature3_text' => "Pitanja s višestrukim izborom trenutni rezultati s detaljnim objašnjenjima.",
+    'feature4_title' => "☁️ Supabase Backup",
+    'feature4_text' => "Pronađite sve svoje rezultate u Nadzornoj ploči u bilo kojem trenutku.",
+    'start_button' => "Započni →",
+
+    // --- Login Page ---
+    'login_title' => "Prijava | AI Projekt Grupa",
+    'login_heading' => "Prijava",
+    'login_with_google' => "Prijava putem Googlea",
+    'login_with_github' => "Prijava putem GitHuba",
+    'login_or' => "ili",
+    'login_button' => "Prijava",
+    'login_no_account' => "Još nemate račun?",
+    'login_signup_link' => "Registriraj se",
+
+    // --- Register Page ---
+    'register_title_full' => "Registracija | AI Projekt Grupa",
+    'register_heading' => "Registracija",
+    'register_with_google' => "Registriraj se putem Googlea",
+    'register_with_github' => "Registriraj se putem GitHuba",
+    'register_or' => "ili",
+    'register_button_submit' => "Registriraj se",
+    'register_have_account' => "Već imate račun?",
+    'register_login_link' => "Prijava",
+
+    // --- Form Page ---
+    'form_title_full' => "Generiraj | AI Projekt Grupa",
+    'form_heading' => "Generiraj novi sadržaj",
+    'form_label_select_files' => "Odaberite jednu ili više PDF datoteka:",
+    'form_label_choose_type' => "Odaberite tip sadržaja za generiranje:",
+    'form_option_summary_only' => "Samo sažetak",
+    'form_option_quiz_only' => "Samo kviz",
+    'form_option_summary_quiz_source' => "Sažetak & kviz (iz izvora)",
+    'form_option_summary_quiz_summary' => "Sažetak & kviz (iz sažetka)",
+    'form_label_summary_mode' => "Način sažetka:",
+    'toggle_professional' => "Profesionalno",
+    'toggle_educational' => "Edukativno",
+    'form_label_generation_scope' => "Opseg generiranja:",
+    'radio_single_result' => "Jedan rezultat za sve dokumente",
+    'radio_multiple_result' => "Jedan rezultat po dokumentu",
+    'form_submit' => "Pokreni generiranje",
+    'loader_processing' => "Obrada u tijeku, pričekajte...",
+
+    // --- Dashboard Page ---
+    'dashboard_title_full' => "Nadzorna ploča | AI Projekt Grupa",
+    'dashboard_heading' => "Vaša nadzorna ploča",
+    'dashboard_greeting' => "Pozdrav",
+    'dashboard_intro' => "Ovdje pronađite sve svoje analizirane dokumente.",
+    'courses_section_title' => "Moji tečajevi",
+    'course_link' => "Tečaj",
+    'no_courses' => "Još niste analizirali nijedan dokument.",
+
+    // --- Quiz Page ---
+    'quiz_title_full' => "Dinamički kviz | AI Projekt Grupa",
+    'quiz_loading_course' => "Učitavanje tečaja...",
+    'tab_quiz' => "Kviz",
+    'tab_resume' => "Sažetak",
+    'tab_both' => "Oboje",
+    'download_pdf' => "Preuzmi PDF",
+    'download_pdf_resume' => "Preuzmi PDF",
+    'loader_preparing' => "Priprema...",
+    'error_no_quiz' => "Nema kviza za učitavanje. Molimo generirajte novi.",
+    'error_processing' => "Došlo je do pogreške tijekom obrade:",
+]; 
