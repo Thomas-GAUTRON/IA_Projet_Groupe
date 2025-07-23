@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($responseData['task_id'])) {
         $_SESSION['task_id'] = $responseData['task_id'];
         // Rediriger vers la page de quiz qui gérera l'attente
-        header("Location: quizz.php");
+        header("Location: quiz.php");
         exit;
     } else {
         // Gérer le cas où la réponse n'est pas ce qui est attendu

@@ -61,7 +61,7 @@ IA_Projet_Groupe/
 │   └── ex.json             # Exemple de quiz
 │
 ├── website/                # Frontend
-│   ├── *.php               # Pages dynamiques (upload, quizz, dashboard…)
+│   ├── *.php               # Pages dynamiques (upload, quiz, dashboard…)
 │   ├── assets/
 │   │   ├── css/styles.css  # Styles Bootstrap-like + custom
 │   │   └── js/script.js    # Logique quiz, sélecteur cours, appels API
@@ -80,7 +80,7 @@ IA_Projet_Groupe/
 | **app_py/app.py** | Point d’entrée Flask : upload, suivi de tâche, génération PDF |
 | **app_py/gemini_incl.py** | Classe `AI` : appels Gemini + prompts français/anglais |
 | **app_py/result_prep.py** | Nettoyage JSON quiz ➜ LaTeX, compilation LaTeX ➜ PDF |
-| **website/quizz.php** | Interface quiz/résumé + loader + onglets + export PDF |
+| **website/quiz.php** | Interface quiz/résumé + loader + onglets + export PDF |
 | **website/assets/js/script.js** | Construction UI quiz, appels `/json_quiz_to_pdf` & `/latex_to_pdf` |
 | **website/save_result.php** | Envoi des résultats à Supabase |
 | **app_py/install_requirements.py** | Script de fallback pour installer les packages manquants |
@@ -133,7 +133,7 @@ Elles sont chargées via CDN, aucun build Node n’est requis.
    - **4** ➜ Résumé uniquement
 2. `index.php` envoie le form-data à `app_py/app.py` :`POST /`.
 3. Flask crée une **tâche asynchrone** (`task_id`) et renvoie immédiatement JSON :`{"task_id": "…"}`.
-4. Le frontend bascule sur `quizz.php` qui :
+4. Le frontend bascule sur `quiz.php` qui :
    - affiche un loader
    - interroge périodiquement `/result/<task_id>`
    - met à jour la barre de progression + aperçu (`preview`).

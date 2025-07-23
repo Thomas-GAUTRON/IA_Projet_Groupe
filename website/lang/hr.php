@@ -9,26 +9,26 @@ $translations = [
     'nav_login' => "Prijava",
 
     // --- Index Page ---
-    'home_title' => "Početna | AI Projekt Grupa",
-    'main_title' => "AI Projekt Grupa",
+    'home_title' => "Početna | AcademIA",
+    'main_title' => "AcademIA",
     'subtitle' => "Vaša platforma za analizu i kviz PDF dokumenata pokretana umjetnom inteligencijom.",
     'hello' => "Pozdrav",
     'add_pdf_button' => "Dodaj PDF",
     'register_button' => "Kreiraj račun",
     'concept_title' => "Koncept",
-    'concept_text' => "AI&nbsp;Projekt&nbsp;Grupa je obrazovna platforma koja koristi snagu umjetne inteligencije — posebno <strong>Google&nbsp;Gemini&nbsp;2.5&nbsp;Flash</strong> — za pretvaranje vaših PDF-ova u interaktivni sadržaj: elegantne LaTeX sažetke i ocijenjene kvizove.",
+    'concept_text' => "AcademIA je obrazovna platforma koja koristi snagu umjetne inteligencije — posebno <strong>Google&nbsp;Gemini&nbsp;2.5&nbsp;Flash</strong> — za pretvaranje vaših PDF-ova u interaktivni sadržaj: elegantne LaTeX sažetke i ocijenjene kvizove.",
     'feature1_title' => "📄 Više-PDF Upload",
     'feature1_text' => "Povucite i ispustite više datoteka dok backend obrađuje paralelno.",
     'feature2_title' => "🧠 LaTeX Sažetak",
     'feature2_text' => "Generirani sažetak u LaTeXu, spreman za kompilaciju, s očuvanim jednadžbama.",
     'feature3_title' => "❓ Interaktivni kviz",
     'feature3_text' => "Pitanja s višestrukim izborom trenutni rezultati s detaljnim objašnjenjima.",
-    'feature4_title' => "☁️ Supabase Backup",
+    'feature4_title' => "☁️ Sigurnosna kopija Supabase",
     'feature4_text' => "Pronađite sve svoje rezultate u Nadzornoj ploči u bilo kojem trenutku.",
     'start_button' => "Započni →",
 
     // --- Login Page ---
-    'login_title' => "Prijava | AI Projekt Grupa",
+    'login_title' => "Prijava | AcademIA",
     'login_heading' => "Prijava",
     'login_with_google' => "Prijava putem Googlea",
     'login_with_github' => "Prijava putem GitHuba",
@@ -41,7 +41,7 @@ $translations = [
     
 
     // --- Register Page ---
-    'register_title_full' => "Registracija | AI Projekt Grupa",
+    'register_title_full' => "Registracija | AcademIA",
     'register_heading' => "Registracija",
     'register_with_google' => "Registriraj se putem Googlea",
     'register_with_github' => "Registriraj se putem GitHuba",
@@ -56,7 +56,7 @@ $translations = [
     'register_confirm_password' => "Potvrdi lozinku",
 
     // --- Form Page ---
-    'form_title_full' => "Generiraj | AI Projekt Grupa",
+    'form_title_full' => "Generiraj | AcademIA",
     'form_heading' => "Generiraj novi sadržaj",
     'form_label_select_files' => "Odaberite jednu ili više PDF datoteka:",
     'form_label_choose_type' => "Odaberite tip sadržaja za generiranje:",
@@ -74,16 +74,16 @@ $translations = [
     'loader_processing' => "Obrada u tijeku, pričekajte...",
 
     // --- Dashboard Page ---
-    'dashboard_title_full' => "Nadzorna ploča | AI Projekt Grupa",
+    'dashboard_title_full' => "Nadzorna ploča | AcademIA",
     'dashboard_heading' => "Vaša nadzorna ploča",
     'dashboard_greeting' => "Pozdrav",
     'dashboard_intro' => "Ovdje pronađite sve svoje analizirane dokumente.",
-    'courses_section_title' => "Moji tečajevi",
-    'course_link' => "Tečaj",
+    'courses_section_title' => "Moji dokumenti",
+    'course_link' => "dokumenti",
     'no_courses' => "Još niste analizirali nijedan dokument.",
 
     // --- Quiz Page ---
-    'quiz_title_full' => "Dinamički kviz | AI Projekt Grupa",
+    'quiz_title_full' => "Dinamički kviz | AcademIA",
     'quiz_loading_course' => "Učitavanje tečaja...",
     'tab_quiz' => "Kviz",
     'tab_resume' => "Sažetak",

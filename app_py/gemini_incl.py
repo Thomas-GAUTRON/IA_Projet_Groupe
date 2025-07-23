@@ -59,12 +59,12 @@ class AI:
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\lhead{\textbf{AI Abstract}}
+\lhead{\textbf{AcademIA}}
 \rhead{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0pt}
 \usepackage{parskip}
-\author{DP,FA,GT}
+\author{AcademIA}
 \begin{document}
 
 """

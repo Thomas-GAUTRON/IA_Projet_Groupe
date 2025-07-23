@@ -75,7 +75,7 @@ if (is_array($data)) {
                     echo '<ul class="course-items">';
                     $i = 1;
                     foreach ($uniqueIds as $safeid) {
-                        echo "<li><a href=\"change.php?id=$safeid&amp;type=quizz\" class=\"course-link\">" . t('course_link') . " $i</a></li>";
+                        echo "<li><a href=\"change.php?id=$safeid&amp;type=quiz\" class=\"course-link\">" . t('course_link') . " $i</a></li>";
                         $i++;
                     }
                     echo '</ul>';

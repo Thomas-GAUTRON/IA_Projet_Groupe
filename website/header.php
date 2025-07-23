@@ -30,7 +30,7 @@ if (!function_exists('t')) {
         <div class="nav-center">
             <?php if (isset($_SESSION['access_token'])): ?>
                 <a href="form.php" class="nav-link"><?php echo t('nav_generate'); ?></a>
-                <a href="quizz.php" class="nav-link"><?php echo t('nav_courses'); ?></a>
+                <a href="quiz.php" class="nav-link"><?php echo t('nav_courses'); ?></a>
                 <a href="dashboard.php" class="nav-link"><?php echo t('nav_dashboard'); ?></a>
             <?php endif; ?>
         </div>
