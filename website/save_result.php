@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($data['result']) && is_array($data['result'])) {
         $tableau = $data['result'];
+        $_SESSION['result'] = $tableau;
         $prefix1 = '---ABSTRACT START---';
         $prefix2 = '---QUIZ_START---';
 

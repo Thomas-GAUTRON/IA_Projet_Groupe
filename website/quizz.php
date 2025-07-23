@@ -114,9 +114,9 @@ if (!$task_id) {
      }
 
     // Données initiales (cas dashboard)
-    const HAS_INITIAL_DATA = <?php echo isset($quizDataArr) && count($quizDataArr) ? 'true' : 'false'; ?>;
-    <?php if (isset($quizDataArr)): ?>
-    window.initialQuizArray = <?php echo json_encode($quizDataArr, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); ?>;
+    const HAS_INITIAL_DATA = <?php echo (isset($quizDataArr) && !empty($quizDataArr)) || (isset($resumeArr) && !empty($resumeArr)) ? 'true' : 'false'; ?>;
+    <?php if (isset($quizDataArr) || isset($resumeArr)): ?>
+    window.initialQuizArray = <?php echo json_encode($quizDataArr ?? [], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); ?>;
     window.initialResumeArray = <?php echo json_encode($resumeArr ?? [], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); ?>;
     <?php endif; ?>
   </script>
@@ -124,54 +124,66 @@ if (!$task_id) {
 </head>
 
 <body>
-  <?php include 'header.php';
-  ?>
+    <div class="page-container">
+        <?php include 'header.php'; ?>
 
-  <div id="loader" style="display:none; text-align:center; margin-top:20px;">
-      <div class="spinner" style="margin:auto; width:60px; height:60px; border:8px solid #f3f3f3; border-top:8px solid #3498db; border-radius:50%; animation:spin 1s linear infinite;"></div>
-      <p id="loader-msg">Préparation...</p>
-      <progress id="loader-bar" value="0" max="100" style="width:80%; height:20px;"></progress>
-  </div>
-  <div id="error-message" style="display:none; color:red; text-align:center;"></div>
-  <textarea id="latex-input" style="display:none;"><?php echo isset($resumeArr) ? (is_array($resumeArr) ? ($resumeArr[0] ?? '') : $resumeArr) : ''; ?></textarea>
-  <textarea id="quiz-input" style="display:none;"><?php echo isset($quizDataArr) ? (is_array($quizDataArr) ? ($quizDataArr[0] ?? '') : $quizDataArr) : ''; ?></textarea>
+        <main class="container quiz-layout">
+            <h1 id="course-title">Chargement du cours...</h1>
+            <select id="course-select" class="course-selector"></select>
 
+            <!-- Onglets -->
+            <div class="tabs">
+                <button onclick="updatePanesVisibility(event)" class="tab-button" data-view="quiz">Quiz</button>
+                <button onclick="updatePanesVisibility(event)" class="tab-button" data-view="resume">Résumé</button>
+                <button onclick="updatePanesVisibility(event)" class="tab-button active" data-view="both">Les deux</button>
+            </div>
 
-  <h1 id="course-title">Chargement du cours...</h1>
-  <select id="course-select" style="display:none; margin-bottom:10px;"></select>
+            <!-- Contenu -->
+            <div class="content-container">
+                <div class="pane" id="quiz-pane">
+                    <div class="pane-header">
+                        <h2>Quiz</h2>
+                        <button id="download-pdf" class="btn btn-sm">Télécharger en PDF</button>
+                    </div>
+                    <div id="quiz-container"></div>
+                </div>
 
-  <!-- Onglets -->
-  <div class="tabs">
-    <button class="tab-button" data-view="quiz">Quiz</button>
-    <button class="tab-button" data-view="resume">Résumé</button>
-    <button class="tab-button active" data-view="both">Les deux</button>
-  </div>
-
-  <!-- Contenu -->
-  <div class="container">
-    <div class="pane" id="quiz-pane">
-      <h2>Quiz</h2>
-      <div id="quiz-container"></div>
-      <button id="download-pdf">Télécharger le quiz en PDF</button>
+                <div class="pane" id="resume-pane">
+                    <div class="pane-header">
+                        <h2>Résumé</h2>
+                        <button id="download-pdf-resume" class="btn btn-sm" onclick="downloadResumePdf()">Télécharger en PDF</button>
+                    </div>
+                    <iframe id="pdf-frame" class="pdf-iframe"></iframe>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <div class="pane" id="resume-pane">
-      <h2>Résumé</h2>
-      <div id="pdf-container" style="display:none; margin-top:20px; max-height:650px; border:1px solid #ccc; overflow:auto;">
-        <iframe id="pdf-frame" style="width:100%; height:640px; border:none;"></iframe>
-      </div>
-      <p id="output" style="display:none;"></p>
-      <button id="download-pdf-resume" onclick="downloadResumePdf()">Télécharger le résumé en PDF</button>
-      <!-- Aperçu PDF -->
-      
+    <div id="loader" class="loader-overlay">
+        <div class="spinner"></div>
+        <p id="loader-msg" class="loader-text">Préparation...</p>
+        <progress id="loader-bar" class="loader-bar" value="0" max="100"></progress>
     </div>
-  </div>
-  <script>
+    <div id="error-message" class="error-banner"></div>
+
+    <textarea id="latex-input" style="display:none;"><?php echo isset($resumeArr) ? (is_array($resumeArr) ? ($resumeArr[0] ?? '') : $resumeArr) : ''; ?></textarea>
+    <textarea id="quiz-input" style="display:none;"><?php echo isset($quizDataArr) ? (is_array($quizDataArr) ? ($quizDataArr[0] ?? '') : $quizDataArr) : ''; ?></textarea>
+
+    <script>
     document.addEventListener('DOMContentLoaded', function() {
         const loader = document.getElementById('loader');
         const errorMessage = document.getElementById('error-message');
         const container = document.querySelector('.container');
 
+        // Cas 1: Les données sont déjà chargées par PHP (via le Dashboard)
+        if (HAS_INITIAL_DATA) {
+            // Le nouveau script.js gère l'initialisation, donc on n'a plus besoin
+            // de la logique complexe ici. On s'assure juste que le loader est masqué.
+            loader.style.display = 'none';
+            return; // Le reste est géré par script.js
+        }
+
+        // Cas 2: Un ID de tâche est présent, on doit interroger le serveur
         if (TASK_ID) {
             loader.style.display = 'block';
             container.style.display = 'none';
@@ -181,11 +193,10 @@ if (!$task_id) {
                     .then(response => response.json())
                     .then(data => {
                         if (data.status === 'completed') {
-                            clearInterval(interval);
-                            // Suppression du task_id stocké globalement
-                            localStorage.removeItem('current_task_id');
-                            // Recharge la page pour afficher automatiquement les résultats
-                            window.location.reload();
+                             clearInterval(interval);
+                            loader.style.display = 'none';
+                            container.style.display = 'flex';
+                            processResults(data.result);
                             return;
                         } else if (data.status === 'failed') {
                             clearInterval(interval);
@@ -210,29 +221,14 @@ if (!$task_id) {
                         errorMessage.style.display = 'block';
                     });
             }, 5000); // Interroge toutes les 5 secondes
+        } else {
+            // Cas 3: Aucune donnée et aucun ID de tâche
+            loader.style.display = 'none';
+            errorMessage.textContent = "Aucun quiz à charger. Veuillez en générer un nouveau.";
+            errorMessage.style.display = 'block';
         }
 
         // Les cours seront chargés via loadCourse dans script.js
-
-        function addToCourses(quizContent, resumeContent) {
-            if (quizContent) {
-                const match = quizContent.match(/```json(.*?)```/s) || quizContent.match(/---QUIZ_START---(.*?)---QUIZ_END---/s);
-                if (match && match[1]) {
-                    try {
-                        courseQuizzes.push(JSON.parse(match[1].trim()));
-                    } catch(e) { console.error('JSON parse error', e); }
-                }
-            }
-            if (resumeContent) {
-                const match = resumeContent.match(/\\begin{document}(.*?)\\end{document}/s);
-                if (match && match[1]) {
-                    courseResumes.push(match[1].trim());
-                } else {
-
-                    courseResumes.push('');
-                }
-            }
-        }
 
         function processResults(results) {
             // Sauvegarder les résultats en arrière-plan
@@ -242,50 +238,51 @@ if (!$task_id) {
                 body: JSON.stringify({ result: results })
             }).then(res => res.json()).then(console.log).catch(console.error);
 
-            let quizContent = '';
-            let resumeContent = '';
+            // Nouvelle logique pour traiter les résultats sans recharger
+            window.courses = []; // Réinitialiser les cours
+
+            let initialQuizzes = [];
+            let initialResumes = [];
 
             const quizPrefix = '---QUIZ_START---';
             const abstractPrefix = '---ABSTRACT START---';
 
             results.forEach(element => {
                 if (element.startsWith(quizPrefix)) {
-                    quizContent += element;
+                    initialQuizzes.push(element);
                 } else if (element.startsWith(abstractPrefix)) {
-                    resumeContent += element;
+                    initialResumes.push(element);
                 }
             });
 
-            // Mettre à jour le contenu de la page
-            addToCourses(quizContent, resumeContent);
+            // Recréer la structure de cours comme dans le script.js
+            const numCourses = Math.max(initialQuizzes.length, initialResumes.length);
+            for (let i = 0; i < numCourses; i++) {
+                const quizContent = initialQuizzes[i] || null;
+                const resumeContent = initialResumes[i] || null;
+                
+                const quiz = quizContent ? parseQuizJson(quizContent) : null;
+                const resume = resumeContent ? resumeContent.match(/\\begin{document}(.*?)\\end{document}/s)?.[1].trim() : null;
+
+                if (quiz || resume) {
+                    let title = `Cours ${i + 1}`;
+                    if (quiz && quiz.courseTitle) {
+                        title = quiz.courseTitle;
+                    } else if (resume) {
+                        const match = resume.match(/section\*\{([^}]+)\}/);
+                        if (match) title = match[1].replace(/\\[a-zA-Z]+/g, '').trim();
+                    }
+                    window.courses.push({ title: title, quizData: quiz, resumeData: resume });
+                }
+            }
+            
+            // Mettre à jour l'interface
             populateCourseSelector();
             loadCourse(0);
+            updateTabsAndPanesForCourse(window.courses[0]);
         }
-    });
 
-    const buttons = document.querySelectorAll('.tab-button');
-    const quizPane = document.getElementById('quiz-pane');
-    const resumePane = document.getElementById('resume-pane');
-
-    buttons.forEach(button => {
-      button.addEventListener('click', () => {
-        // Réinitialise les boutons
-        buttons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-
-        const view = button.dataset.view;
-
-        if (view === 'quiz') {
-          quizPane.classList.remove('hidden');
-          resumePane.classList.add('hidden');
-        } else if (view === 'resume') {
-          quizPane.classList.add('hidden');
-          resumePane.classList.remove('hidden');
-        } else {
-          quizPane.classList.remove('hidden');
-          resumePane.classList.remove('hidden');
-        }
-      });
+        // La gestion des boutons est maintenant dans script.js
     });
   </script>
   <?php include 'footer.html'; ?>

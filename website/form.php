@@ -15,55 +15,62 @@ if (!isset($_SESSION['access_token'])) {
 </head>
 
 <body>
-    <?php include 'header.php'; ?>
-    <h1>Upload PDF Files</h1>
-    <form action="load.php" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="files">Select PDF Files:</label>
-            <input type="file" name="files[]" id="files" multiple required accept=".pdf">
-        </div>
+    <div class="page-container">
+        <?php include 'header.php'; ?>
+        <main class="container">
+            <h1>Générer un nouveau contenu</h1>
+            <form action="load.php" method="post" enctype="multipart/form-data" class="upload-form">
+                <div class="form-group">
+                    <label for="files">Sélectionnez un ou plusieurs fichiers PDF :</label>
+                    <input type="file" name="files[]" id="files" multiple required accept=".pdf">
+                </div>
 
-        <div class="form-group">
-            <label for="option">Choose Processing Option:</label>
-            <select name="option" id="option" required>
-                <option value="1">Abstract Only</option>
-                <option value="2">Quiz From Source Only</option>
-                <option value="3">Abstract & Quiz From Source</option>
-                <option value="4">Abstract & Quiz From Abstract</option>
-            </select>
-        </div>
+                <div class="form-group">
+                    <label for="option">Choisissez le type de contenu à générer :</label>
+                    <select name="option" id="option" required>
+                        <option value="1">Résumé seulement</option>
+                        <option value="2">Quiz seulement</option>
+                        <option value="3">Résumé & Quiz (depuis la source)</option>
+                        <option value="4">Résumé & Quiz (depuis le résumé)</option>
+                    </select>
+                </div>
 
-        <div class="form-group">
-            <label>Mode: (influences the abstract)</label>
-            <div class="toggle-group">
-                <span class="toggle-label">Professional</span>
-                <label class="switch">
-                    <input type="checkbox" name="mode" id="mode-toggle" value="educational">
-                    <span class="slider round"></span>
-                </label>
-                <span class="toggle-label">Educational</span>
+                <div class="form-group">
+                    <label>Mode de résumé :</label>
+                    <div class="toggle-group">
+                        <span class="toggle-label">Professionnel</span>
+                        <label class="switch">
+                            <input type="checkbox" name="mode" id="mode-toggle" value="educational">
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="toggle-label">Pédagogique</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Portée de la génération :</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="modifier" value="sngl" checked>
+                            Un seul résultat pour tous les documents
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="modifier" value="mtpl">
+                            Un résultat pour chaque document
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submit-btn">Lancer la génération</button>
+            </form>
+
+            <div id="loader" class="loader-overlay" style="display:none;">
+                <div class="loader-content">
+                    <div class="spinner"></div>
+                    <p class="loader-text">Traitement en cours, veuillez patienter...</p>
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            <label>Processing Mode:</label>
-            <div class="radio-group">
-                <label class="radio-option">
-                    <input type="radio" id="radio1" name="modifier" value="sngl" checked>
-                    Result For All (one abstract and/or one quiz combining all sources)
-                </label>
-                <label class="radio-option">
-                    <input type="radio" id="radio2" name="modifier" value="mtpl">
-                    Result for Each (each source gets its own abstract and/or quiz)
-                </label>
-            </div>
-        </div>
-
-        <button type="submit" class="btn" id="submit-btn">Upload and Process Files</button>
-    </form>
-    <div id="loader" style="display:none;text-align:center;margin-top:20px;">
-        <div class="spinner" style="margin:auto;width:60px;height:60px;border:8px solid #f3f3f3;border-top:8px solid #3498db;border-radius:50%;animation:spin 1s linear infinite;"></div>
-        <p>Traitement en cours, veuillez patienter...</p>
+        </main>
     </div>
     <script>
         document.querySelector('form').addEventListener('submit', function() {

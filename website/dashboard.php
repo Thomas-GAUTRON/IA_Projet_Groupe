@@ -60,23 +60,33 @@ if (is_array($data)) {
 </head>
 
 <body>
-    <?php include 'header.php'; ?>
-    <div class="container2">
-        <h1>Bienvenue sur votre dashboard</h1>
-        <p>Bonjour, <b><?php echo htmlspecialchars($_SESSION['user_email']); ?></b> !</p>
+    <div class="page-container">
+        <?php include 'header.php'; ?>
+        <main class="container">
+            <div class="dashboard-header">
+                <h1>Votre Dashboard</h1>
+                <p>Bonjour, <b><?php echo htmlspecialchars($_SESSION['user_email']); ?></b> ! Retrouvez ici vos documents analysés.</p>
+            </div>
 
-        <?php
-        echo "<h2>Mes cours</h2>";
-        if (isset($uniqueIds)) {
-            $i = 1;
-            foreach ($uniqueIds as $safeid) {
-                echo "<a href=\"change?id=$safeid&amp;type=quizz\">Cours $i</a><br>";
-                $i++;
-            }
-        }
-        ?>
+            <section class="courses-list">
+                <h2>Mes cours</h2>
+                <?php
+                if (isset($uniqueIds) && !empty($uniqueIds)) {
+                    echo '<ul class="course-items">';
+                    $i = 1;
+                    foreach ($uniqueIds as $safeid) {
+                        echo "<li><a href=\"change.php?id=$safeid&amp;type=quizz\" class=\"course-link\">Cours $i</a></li>";
+                        $i++;
+                    }
+                    echo '</ul>';
+                } else {
+                    echo '<p class="no-courses">Vous n\'avez pas encore analysé de documents.</p>';
+                }
+                ?>
+            </section>
+        </main>
+        <?php include 'footer.html'; ?>
     </div>
-     <?php include 'footer.html'; ?>
 </body>
 
 </html>
