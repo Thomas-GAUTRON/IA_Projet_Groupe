@@ -274,6 +274,9 @@ if (!$task_id) {
                     }
                     window.courses.push({ title: title, quizData: quiz, resumeData: resume });
                 }
+
+                // Reaload the page
+                window.location.reload();
             }
             
             // Mettre à jour l'interface

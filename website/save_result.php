@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $randomInt64Pos = random_int64_positive();
-        
+        $_SESSION['reponse'] = $randomInt64Pos;
         // Inclure la logique de découpage si elle est dans un autre fichier
         // require_once 'path/to/split_text_function.php';
 
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        echo json_encode(['status' => 'success', 'message' => 'Résultats sauvegardés.']);
+        echo json_encode(['status' => 'success', 'message' => 'Résultats sauvegardés.', 'id_request' => $randomInt64Pos]);
     } else {
         http_response_code(400);
         echo json_encode(['status' => 'error', 'message' => 'Données de résultat invalides.']);
