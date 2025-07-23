@@ -168,27 +168,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <form method="POST" action="" class="auth-form">
                     <div class="form-group">
-                        <label for="first_name">Prénom :</label>
+                        <label for="first_name"><?php echo t('register_first_name'); ?></label>
                         <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($_POST['first_name'] ?? ''); ?>" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="last_name">Nom :</label>
+                        <label for="last_name"><?php echo t('register_last_name'); ?></label>
                         <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($_POST['last_name'] ?? ''); ?>" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Email :</label>
+                        <label for="email"><?php echo t('register_email'); ?></label>
                         <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="password">Mot de passe :</label>
+                        <label for="password"><?php echo t('register_password'); ?></label>
                         <input type="password" id="password" name="password" minlength="6" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="confirm_password">Confirmer le mot de passe :</label>
+                        <label for="confirm_password"><?php echo t('register_confirm_password'); ?></label>
                         <input type="password" id="confirm_password" name="confirm_password" minlength="6" required>
                     </div>
 

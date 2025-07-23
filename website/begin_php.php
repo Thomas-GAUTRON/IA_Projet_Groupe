@@ -1,43 +1,100 @@
 <?php
 session_start();
 
+// === Load configuration (Supabase, etc.) ===
+$config = parse_ini_file('../.env');
+$supabaseUrl = $config['SUPABASE_URL'] ?? '';
+$supabaseKey = $config['SUPABASE_KEY'] ?? '';
+
 // === Language Management ===
 // 1. Set default language if not set
 if (!isset($_SESSION['lang'])) {
     $_SESSION['lang'] = 'en'; // Anglais par défaut
 }
 
-// 2. Handlstyle="text-align:right; e language change
+// 2. Recover saved preference from Supabase if user logged in and no explicit ?lang=
+if (isset($_SESSION['access_token'], $_SESSION['user_id']) && !isset($_GET['lang'])) {
+    $userId = $_SESSION['user_id'];
+    $ch = curl_init("$supabaseUrl/rest/v1/user_settings?select=lang&id_user=eq.$userId&limit=1");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "apikey: $supabaseKey",
+        "Authorization: Bearer $supabaseKey",
+        "Accept: application/json"
+    ]);
+    $resp = curl_exec($ch);
+    if (!curl_errno($ch)) {
+        $arr = json_decode($resp, true);
+        if (is_array($arr) && isset($arr[0]['lang'])) {
+            $_SESSION['lang'] = $arr[0]['lang'];
+        }
+    }
+    curl_close($ch);
+}
+
+// 3. Handle language change via GET
 if (isset($_GET['lang'])) {
     $allowed_langs = ['fr', 'en', 'hr', 'mk'];
     if (in_array($_GET['lang'], $allowed_langs)) {
         $_SESSION['lang'] = $_GET['lang'];
+
+        // Si l'utilisateur est connecté, on sauve la préférence dans Supabase
+        if (isset($_SESSION['access_token'], $_SESSION['user_id'])) {
+            save_user_lang($supabaseUrl, $supabaseKey, $_SESSION['user_id'], $_SESSION['lang']);
+        }
     }
-    // Redirigestyle="text-align:right; r pour nettoyer l'URL
+    // Redirection pour nettoyer l'URL
     header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
     exit;
 }
 
-// 3. Load the language file
+// 4. Load the language file
 $lang_file = __DIR__ . '/lang/' . $_SESSION['lang'] . '.php';
 if (file_exists($lang_file)) {
     require_once($lang_file);
 } else {
-    // Fallback to French if file not found
-    require_once __DIR__ . '/lang/fr.php';
+    // Fallback to English if file not found
+    require_once __DIR__ . '/lang/en.php';
 }
 
-// 4. Translation helper function
-function t($key) {
+// 5. Translation helper function
+function t($key)
+{
     global $translations;
     return $translations[$key] ?? $key; // Retourne la clé si la traduction n'est pas trouvée
 }
 // === End Language Management ===
 
+// Helper: enregistre (ou met à jour) la langue dans Supabase
+function save_user_lang($supabaseUrl, $supabaseKey, $userId, $lang)
+{
+    $ch = curl_init("$supabaseUrl/rest/v1/user_settings");
 
-// Récupération de la configuration (à adapter selon votre méthode)
-$configFile = __DIR__ . '/../config.env';
-$config = parse_ini_file('../.env');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+        'id_user' => $userId,
+        'lang' => $lang
+    ]));
+
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        "apikey: $supabaseKey",
+        "Authorization: Bearer $supabaseKey",
+        'Prefer: resolution=merge-duplicates'
+    ]);
+
+    $response = curl_exec($ch);
+    $http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    if ($http >= 400) {
+        $_SESSION['lang_error'] = 'Failed to save language preference (HTTP ' . $http . ' - ' . $userId . ')';
+    }
+
+    curl_close($ch);
+}
 
 function afficher_etat_connexion()
 {
@@ -111,5 +168,3 @@ function split_text($texte)
     $chunks = split_text_by_words($texte, $taille_chunk);
     return $chunks;
 }
-
-

@@ -36,6 +36,9 @@ $translations = [
     'login_button' => "Prijava",
     'login_no_account' => "Još nemate račun?",
     'login_signup_link' => "Registriraj se",
+    'login_email' => "Email",
+    'login_password' => "Lozinka",
+    
 
     // --- Register Page ---
     'register_title_full' => "Registracija | AI Projekt Grupa",
@@ -46,6 +49,11 @@ $translations = [
     'register_button_submit' => "Registriraj se",
     'register_have_account' => "Već imate račun?",
     'register_login_link' => "Prijava",
+    'register_first_name' => "Ime",
+    'register_last_name' => "Prezime",
+    'register_email' => "Email",
+    'register_password' => "Lozinka",
+    'register_confirm_password' => "Potvrdi lozinku",
 
     // --- Form Page ---
     'form_title_full' => "Generiraj | AI Projekt Grupa",

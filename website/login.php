@@ -143,12 +143,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email_login'])) {
                 <!-- Formulaire classique -->
                 <form method="POST" class="auth-form">
                     <div class="form-group">
-                        <label for="email">Email :</label>
+                        <label for="email"><?php echo t('login_email'); ?></label>
                         <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="password">Mot de passe :</label>
+                        <label for="password"><?php echo t('login_password'); ?></label>
                         <input type="password" id="password" name="password" required>
                     </div>
 

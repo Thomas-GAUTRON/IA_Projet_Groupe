@@ -36,6 +36,8 @@ $translations = [
     'login_button' => "Log in",
     'login_no_account' => "Don't have an account yet?",
     'login_signup_link' => "Sign up",
+    'login_email' => "Email",
+    'login_password' => "Password",
 
     // --- Register Page ---
     'register_title_full' => "Sign Up | AI Project Group",
@@ -46,6 +48,11 @@ $translations = [
     'register_button_submit' => "Sign up",
     'register_have_account' => "Already have an account?",
     'register_login_link' => "Log in",
+    'register_first_name' => "First name",
+    'register_last_name' => "Last name",
+    'register_email' => "Email",
+    'register_password' => "Password",
+    'register_confirm_password' => "Confirm password",
 
     // --- Form Page ---
     'form_title_full' => "Generate | AI Project Group",

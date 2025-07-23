@@ -7,13 +7,16 @@ if (!function_exists('t')) {
 
 ?>
 <header class="main-header">
+    <?php if (isset($_SESSION['lang_error'])): ?>
+        <div class="alert alert-danger" style="text-align:center;"><?php echo htmlspecialchars($_SESSION['lang_error']); unset($_SESSION['lang_error']); ?></div>
+    <?php endif; ?>
     <nav class="main-nav">
         <div class="nav-left">
             <!-- Sélecteur de langue -->
             <form method="get" class="lang-form">
                 <select name="lang" class="lang-select" onchange="this.form.submit()">
-                    <option value="fr" <?php echo ($_SESSION['lang'] === 'fr') ? 'selected' : ''; ?>>FR</option>
                     <option value="en" <?php echo ($_SESSION['lang'] === 'en') ? 'selected' : ''; ?>>EN</option>
+                    <option value="fr" <?php echo ($_SESSION['lang'] === 'fr') ? 'selected' : ''; ?>>FR</option>
                     <option value="hr" <?php echo ($_SESSION['lang'] === 'hr') ? 'selected' : ''; ?>>HR</option>
                     <option value="mk" <?php echo ($_SESSION['lang'] === 'mk') ? 'selected' : ''; ?>>MK</option>
                 </select>
