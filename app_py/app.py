@@ -1,14 +1,15 @@
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
 from classes import Source, Result
+from typing import Optional
 import os
-import gemini_incl as gem
-import result_prep as prep
 import re
 import unicodedata
 import uuid
 import threading
-from typing import Optional
+import json
+import gemini_incl as gem
+import result_prep as prep
 
 '''
 Main File for the complete application
